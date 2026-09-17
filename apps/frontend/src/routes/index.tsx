@@ -127,14 +127,21 @@ function Dashboard() {
               </div>
               
               {/* Health Explanation Alert */}
-              <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-xl border border-muted/50 text-sm text-foreground leading-relaxed mt-2">
-                <div className="w-8 h-8 rounded-full bg-blue-100/50 flex items-center justify-center shrink-0 mt-0.5">
-                  <ShieldCheck className="w-4 h-4 text-blue-600" />
+              <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl border border-muted/50 text-sm text-foreground leading-relaxed mt-2 justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-8 rounded-full bg-blue-100/50 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    {coverage.attested}% of your recorded financial volume is fully attested, 
+                    with {coverage.settled}% supported by settlement evidence.
+                  </div>
                 </div>
-                <div>
-                  {coverage.attested}% of your recorded financial volume is fully attested, 
-                  with {coverage.settled}% supported by settlement evidence.
-                </div>
+                <Link to="/verified-activity">
+                  <Button variant="outline" size="sm" className="shrink-0 gap-2">
+                    View Evidence
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
