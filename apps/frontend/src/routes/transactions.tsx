@@ -102,7 +102,7 @@ function Transactions() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="amount">Amount ($)</Label>
+                    <Label htmlFor="amount">Amount (₦)</Label>
                     <Input id="amount" name="amount" type="number" step="0.01" placeholder="-150.00" required />
                   </div>
                   <div className="space-y-2">
@@ -149,7 +149,7 @@ function Transactions() {
                   </TableCell>
                   <TableCell className="text-foreground">{tx.counterparty}</TableCell>
                   <TableCell className={`text-right font-medium ${tx.amount > 0 ? "text-foreground" : "text-muted-foreground"}`}>
-                    {tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toLocaleString()}
+                    {tx.amount > 0 ? '+' : ''}₦{Math.abs(tx.amount).toLocaleString()}
                   </TableCell>
                   <TableCell className="flex justify-end pr-6">
                     {getStatusBadge(tx.status)}
@@ -186,7 +186,7 @@ function Transactions() {
                   <div>
                     <div className="text-xs text-muted-foreground mb-1">Amount</div>
                     <div className={`text-2xl font-bold ${selectedTx.amount > 0 ? "text-foreground" : "text-muted-foreground"}`}>
-                      {selectedTx.amount > 0 ? '+' : ''}${Math.abs(selectedTx.amount).toLocaleString()}
+                      {selectedTx.amount > 0 ? '+' : ''}₦{Math.abs(selectedTx.amount).toLocaleString()}
                     </div>
                   </div>
                   <div>

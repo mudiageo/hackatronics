@@ -10,14 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DispenseRouteImport } from './routes/dispense'
 import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as PassportRouteImport } from './routes/passport'
+import { Route as PrescribeRouteImport } from './routes/prescribe'
 import { Route as TransactionsRouteImport } from './routes/transactions'
 import { Route as VerifiedActivityRouteImport } from './routes/verified-activity'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DispenseRoute = DispenseRouteImport.update({
+  id: '/dispense',
+  path: '/dispense',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InventoryRoute = InventoryRouteImport.update({
@@ -28,6 +35,11 @@ const InventoryRoute = InventoryRouteImport.update({
 const PassportRoute = PassportRouteImport.update({
   id: '/passport',
   path: '/passport',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrescribeRoute = PrescribeRouteImport.update({
+  id: '/prescribe',
+  path: '/prescribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TransactionsRoute = TransactionsRouteImport.update({
@@ -43,45 +55,68 @@ const VerifiedActivityRoute = VerifiedActivityRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dispense': typeof DispenseRoute
   '/inventory': typeof InventoryRoute
   '/passport': typeof PassportRoute
+  '/prescribe': typeof PrescribeRoute
   '/transactions': typeof TransactionsRoute
   '/verified-activity': typeof VerifiedActivityRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dispense': typeof DispenseRoute
   '/inventory': typeof InventoryRoute
   '/passport': typeof PassportRoute
+  '/prescribe': typeof PrescribeRoute
   '/transactions': typeof TransactionsRoute
   '/verified-activity': typeof VerifiedActivityRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dispense': typeof DispenseRoute
   '/inventory': typeof InventoryRoute
   '/passport': typeof PassportRoute
+  '/prescribe': typeof PrescribeRoute
   '/transactions': typeof TransactionsRoute
   '/verified-activity': typeof VerifiedActivityRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/inventory' | '/passport' | '/transactions' | '/verified-activity'
+    | '/'
+    | '/dispense'
+    | '/inventory'
+    | '/passport'
+    | '/prescribe'
+    | '/transactions'
+    | '/verified-activity'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/inventory' | '/passport' | '/transactions' | '/verified-activity'
+  to:
+    | '/'
+    | '/dispense'
+    | '/inventory'
+    | '/passport'
+    | '/prescribe'
+    | '/transactions'
+    | '/verified-activity'
   id:
     | '__root__'
     | '/'
+    | '/dispense'
     | '/inventory'
     | '/passport'
+    | '/prescribe'
     | '/transactions'
     | '/verified-activity'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DispenseRoute: typeof DispenseRoute
   InventoryRoute: typeof InventoryRoute
   PassportRoute: typeof PassportRoute
+  PrescribeRoute: typeof PrescribeRoute
   TransactionsRoute: typeof TransactionsRoute
   VerifiedActivityRoute: typeof VerifiedActivityRoute
 }
@@ -93,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dispense': {
+      id: '/dispense'
+      path: '/dispense'
+      fullPath: '/dispense'
+      preLoaderRoute: typeof DispenseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inventory': {
@@ -107,6 +149,13 @@ declare module '@tanstack/react-router' {
       path: '/passport'
       fullPath: '/passport'
       preLoaderRoute: typeof PassportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prescribe': {
+      id: '/prescribe'
+      path: '/prescribe'
+      fullPath: '/prescribe'
+      preLoaderRoute: typeof PrescribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/transactions': {
@@ -128,8 +177,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DispenseRoute: DispenseRoute,
   InventoryRoute: InventoryRoute,
   PassportRoute: PassportRoute,
+  PrescribeRoute: PrescribeRoute,
   TransactionsRoute: TransactionsRoute,
   VerifiedActivityRoute: VerifiedActivityRoute,
 }

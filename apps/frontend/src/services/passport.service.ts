@@ -26,7 +26,7 @@ const MOCK_PASSPORT_DATA: PassportData = {
   milestones: [
     {
       id: 'ms-2',
-      title: 'Reached $10,000 Verified Monthly Revenue',
+      title: 'Reached ₦10,000 Verified Monthly Revenue',
       date: 'Aug 2026'
     },
     {

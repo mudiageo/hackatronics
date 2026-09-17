@@ -101,11 +101,11 @@ function Inventory() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="unitPrice">Unit Price ($)</Label>
+                    <Label htmlFor="unitPrice">Unit Price (₦)</Label>
                     <Input id="unitPrice" name="unitPrice" type="number" step="0.01" placeholder="10.00" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="costPrice">Cost Price ($)</Label>
+                    <Label htmlFor="costPrice">Cost Price (₦)</Label>
                     <Input id="costPrice" name="costPrice" type="number" step="0.01" placeholder="5.00" required />
                   </div>
                 </div>
@@ -147,7 +147,7 @@ function Inventory() {
                   {item.qtyOnHand}
                 </TableCell>
                 <TableCell className="text-right text-foreground">
-                  ${item.unitPrice.toFixed(2)}
+                  ₦{item.unitPrice.toFixed(2)}
                 </TableCell>
                 <TableCell className="flex justify-end pr-6">
                   {getStatusBadge(item.status)}
@@ -186,11 +186,11 @@ function Inventory() {
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground mb-1">Unit Price</div>
-                    <div className="text-sm font-medium text-foreground">${selectedItem.unitPrice.toFixed(2)}</div>
+                    <div className="text-sm font-medium text-foreground">₦{selectedItem.unitPrice.toFixed(2)}</div>
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground mb-1">Cost Price</div>
-                    <div className="text-sm font-medium text-foreground">${selectedItem.costPrice.toFixed(2)}</div>
+                    <div className="text-sm font-medium text-foreground">₦{selectedItem.costPrice.toFixed(2)}</div>
                   </div>
                 </div>
 

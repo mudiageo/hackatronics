@@ -44,7 +44,7 @@ function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`$${metricsSummary.revenue.toLocaleString()}`}>${metricsSummary.revenue.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`₦${metricsSummary.revenue.toLocaleString()}`}>₦{metricsSummary.revenue.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -57,7 +57,7 @@ function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`$${metricsSummary.expenses.toLocaleString()}`}>${metricsSummary.expenses.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`₦${metricsSummary.expenses.toLocaleString()}`}>₦{metricsSummary.expenses.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -70,7 +70,7 @@ function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`$${metricsSummary.profit.toLocaleString()}`}>${metricsSummary.profit.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`₦${metricsSummary.profit.toLocaleString()}`}>₦{metricsSummary.profit.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -81,7 +81,7 @@ function Dashboard() {
             <Banknote className="h-4 w-4 text-primary-foreground/80 shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl xl:text-3xl font-bold truncate" title={`$${metricsSummary.cashPosition.toLocaleString()}`}>${metricsSummary.cashPosition.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold truncate" title={`₦${metricsSummary.cashPosition.toLocaleString()}`}>₦{metricsSummary.cashPosition.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>
@@ -94,21 +94,26 @@ function Dashboard() {
               <CardTitle className="text-lg font-semibold text-foreground">Financial Coverage</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Stacked Horizontal Bar */}
-              <div className="h-4 w-full flex rounded-full overflow-hidden bg-muted">
-                <div style={{ width: `${coverage.attested}%` }} className="bg-green-600" title="Attested"></div>
-                <div style={{ width: `${coverage.settled}%` }} className="bg-accent" title="Settled"></div>
-                <div style={{ width: `${coverage.recorded}%` }} className="bg-gray-300" title="Self-Reported"></div>
+              {/* Nested Horizontal Bar */}
+              <div className="relative h-6 w-full rounded-full overflow-hidden bg-muted">
+                {/* Background: 100% Recorded */}
+                <div className="absolute top-0 left-0 h-full bg-gray-300 w-full transition-all" title="100% Recorded"></div>
+                {/* Middle: 88% Settled */}
+                <div className="absolute top-0 left-0 h-full bg-accent transition-all" style={{ width: `${coverage.settled}%` }} title={`${coverage.settled}% Settled`}></div>
+                {/* Foreground: 78% Attested */}
+                <div className="absolute top-0 left-0 h-full bg-green-600 transition-all" style={{ width: `${coverage.attested}%` }} title={`${coverage.attested}% Attested`}></div>
               </div>
-              <div className="flex gap-4 text-sm font-medium text-muted-foreground">
-                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-green-600"></div> {coverage.attested}% Attested</div>
+              <div className="flex flex-wrap gap-2 text-sm font-medium text-muted-foreground items-center">
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-gray-300"></div> 100% Recorded</div>
+                <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
                 <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-accent"></div> {coverage.settled}% Settled</div>
-                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-gray-300"></div> {coverage.recorded}% Recorded</div>
+                <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-green-600"></div> {coverage.attested}% Attested</div>
               </div>
               
               {/* Health Explanation */}
               <div className="p-4 bg-muted/50 rounded-lg text-sm text-foreground leading-relaxed">
-                Your business health is <strong>strong</strong>. {coverage.attested}% of your financial volume is fully attested by verified evidence, giving you a high trust score with lending partners. 
+                Your business health is <strong>strong</strong>. {coverage.attested}% of your total recorded financial volume has been fully attested by verified evidence, giving you a high trust score with lending partners. 
                 <a href="/verified-activity" className="text-accent font-medium flex items-center gap-1 mt-2 hover:underline">
                   View evidence trail <ArrowRight className="w-4 h-4" />
                 </a>
@@ -140,7 +145,7 @@ function Dashboard() {
                         <div className="text-xs text-muted-foreground">{tx.date} • {tx.type}</div>
                       </TableCell>
                       <TableCell className={`text-right font-medium ${tx.amount > 0 ? "text-foreground" : "text-muted-foreground"}`}>
-                        {tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount)}
+                        {tx.amount > 0 ? '+' : ''}₦{Math.abs(tx.amount)}
                       </TableCell>
                       <TableCell className="text-right">
                         {getStatusBadge(tx.status)}
