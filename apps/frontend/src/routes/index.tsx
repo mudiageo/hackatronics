@@ -104,8 +104,8 @@ function Dashboard() {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-        <div className="col-span-4 space-y-6">
+      <div className="grid gap-6 lg:grid-cols-7">
+        <div className="lg:col-span-4 space-y-6 min-w-0">
           {/* Coverage Bar & Health Explanation */}
           <Card className="rounded-2xl shadow-sm border-border">
             <CardHeader>
@@ -135,15 +135,16 @@ function Dashboard() {
           </Card>
         </div>
 
-        <div className="col-span-3">
+        <div className="lg:col-span-3 min-w-0">
           {/* Recent Activity */}
           <Card className="rounded-2xl shadow-sm border-border">
             <CardHeader>
               <CardTitle className="text-lg font-semibold text-foreground">Recent Transactions</CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
+              <div className="overflow-x-auto">
+                <Table className="min-w-[400px]">
+                  <TableHeader>
                   <TableRow className="border-border">
                     <TableHead>Description</TableHead>
                     <TableHead className="text-right">Amount</TableHead>
@@ -167,6 +168,7 @@ function Dashboard() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             </CardContent>
           </Card>
         </div>
