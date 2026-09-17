@@ -46,7 +46,7 @@ export const getVerifiedActivity = createServerFn({ method: 'GET' })
         timestamp: tx.date, // We use the date as the timestamp
         type: tx.type,
         description: tx.description,
-        partyA: 'City General Hospital', // Hardcoded self business for now
+        partyA: 'HealthPlus Pharmacy', // Hardcoded self business for now
         partyB: tx.counterparty,
         amount: Math.abs(tx.amount), // Display as absolute positive value in activity log
         status: tx.status === 'attested' ? 'settled' : 'verified',

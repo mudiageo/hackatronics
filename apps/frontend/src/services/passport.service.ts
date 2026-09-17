@@ -81,8 +81,8 @@ export const getPassportData = createServerFn({ method: 'GET' })
     }
 
     return {
-      businessName: 'City General Hospital',
-      industry: 'Healthcare Services',
+      businessName: 'HealthPlus Pharmacy',
+      industry: 'Retail Pharmacy',
       coveragePeriod: 'Jan 2026 - Present',
       trustScore,
       verifiedTransactions,
