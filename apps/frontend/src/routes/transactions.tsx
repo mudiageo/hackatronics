@@ -34,6 +34,7 @@ function Transactions() {
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions)
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [filterLevel, setFilterLevel] = useState<string>('all')
 
   const handleAddTransaction = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -56,19 +57,34 @@ function Transactions() {
     })
   }
 
+  const filteredTransactions = transactions.filter(tx => 
+    filterLevel === 'all' ? true : tx.status === filterLevel
+  );
+
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
       <PageHeader 
         title="Transactions" 
         description="The system of record for everything that happened financially." 
         action={
-          <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-            <DialogTrigger asChild>
-              <Button className="flex gap-2 items-center">
-                <Plus className="w-4 h-4" /> Add Transaction
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+          <div className="flex items-center gap-4">
+            <select
+              value={filterLevel}
+              onChange={(e) => setFilterLevel(e.target.value)}
+              className="bg-muted text-foreground text-sm font-medium border-0 rounded-full py-2 px-4 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer"
+            >
+              <option value="all">All Levels</option>
+              <option value="recorded">Recorded</option>
+              <option value="settled">Settled</option>
+              <option value="attested">Attested</option>
+            </select>
+            <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+              <DialogTrigger asChild>
+                <Button className="flex gap-2 items-center">
+                  <Plus className="w-4 h-4" /> Add Transaction
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Add Transaction</DialogTitle>
                 <DialogDescription>
@@ -119,26 +135,34 @@ function Transactions() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.map((tx) => (
-              <TableRow 
-                key={tx.id} 
-                className="border-border hover:bg-muted/50 cursor-pointer transition-colors"
-                onClick={() => setSelectedTx(tx)}
-              >
-                <TableCell className="text-muted-foreground">{tx.date.split(' ')[0]}</TableCell>
-                <TableCell>
-                  <div className="font-medium text-foreground">{tx.description}</div>
-                  <div className="text-xs text-muted-foreground">{tx.id} • {tx.type}</div>
-                </TableCell>
-                <TableCell className="text-foreground">{tx.counterparty}</TableCell>
-                <TableCell className={`text-right font-medium ${tx.amount > 0 ? "text-foreground" : "text-muted-foreground"}`}>
-                  {tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toLocaleString()}
-                </TableCell>
-                <TableCell className="flex justify-end pr-6">
-                  {getStatusBadge(tx.status)}
+            {filteredTransactions.length > 0 ? (
+              filteredTransactions.map((tx) => (
+                <TableRow 
+                  key={tx.id} 
+                  className="border-border hover:bg-muted/50 cursor-pointer transition-colors"
+                  onClick={() => setSelectedTx(tx)}
+                >
+                  <TableCell className="text-muted-foreground">{tx.date.split(' ')[0]}</TableCell>
+                  <TableCell>
+                    <div className="font-medium text-foreground">{tx.description}</div>
+                    <div className="text-xs text-muted-foreground">{tx.id} • {tx.type}</div>
+                  </TableCell>
+                  <TableCell className="text-foreground">{tx.counterparty}</TableCell>
+                  <TableCell className={`text-right font-medium ${tx.amount > 0 ? "text-foreground" : "text-muted-foreground"}`}>
+                    {tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toLocaleString()}
+                  </TableCell>
+                  <TableCell className="flex justify-end pr-6">
+                    {getStatusBadge(tx.status)}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  No transactions found for this filter level.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>

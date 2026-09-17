@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '../components/PageHeader'
@@ -42,21 +42,21 @@ function Passport() {
         </div>
         
         <div className="flex flex-col items-center justify-center mb-8">
-          <div className="w-32 h-32 rounded-full border-4 border-green-500 flex flex-col items-center justify-center">
-            <span className="text-4xl font-bold text-green-600">{passport.trustScore}</span>
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Trust Score</span>
-          </div>
+          <Link to="/verified-activity" className="w-32 h-32 rounded-full border-4 border-green-500 flex flex-col items-center justify-center hover:bg-green-50 dark:hover:bg-green-950/20 transition-colors cursor-pointer group" title="View Evidence Drill-down">
+            <span className="text-4xl font-bold text-green-600 group-hover:scale-110 transition-transform">{passport.trustScore}</span>
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground mt-1">Trust Score</span>
+          </Link>
         </div>
         
         <div className="grid grid-cols-2 gap-6 mb-8">
-          <div className="p-4 border rounded-lg text-center bg-muted/20">
+          <Link to="/transactions" search={{ filter: 'attested' } as any} className="p-4 border rounded-lg text-center bg-muted/20 hover:bg-muted/50 transition-colors cursor-pointer block" title="View Verified Transactions">
             <p className="text-sm text-muted-foreground mb-1">Verified Transactions</p>
             <p className="text-2xl font-bold">{passport.verifiedTransactions}</p>
-          </div>
-          <div className="p-4 border rounded-lg text-center bg-muted/20">
+          </Link>
+          <Link to="/verified-activity" className="p-4 border rounded-lg text-center bg-muted/20 hover:bg-muted/50 transition-colors cursor-pointer block" title="View Evidence Chain">
             <p className="text-sm text-muted-foreground mb-1">Evidence Documents</p>
             <p className="text-2xl font-bold">{passport.evidenceDocuments}</p>
-          </div>
+          </Link>
         </div>
         
         <div>
