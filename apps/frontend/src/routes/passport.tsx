@@ -1,4 +1,5 @@
 
+import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Download, Activity } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -14,6 +15,7 @@ export const Route = createFileRoute('/passport')({
 })
 
 function Passport() {
+  const [selectedMetric, setSelectedMetric] = useState<string | null>(null)
   const passport = Route.useLoaderData()
 
   const handleExport = () => {
@@ -66,12 +68,18 @@ function Passport() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             <div className="space-y-4">
-              <div className="p-4 bg-muted/20 border rounded-lg">
+              <div 
+                className="p-4 bg-muted/20 border rounded-lg cursor-pointer hover:bg-muted/30 transition-colors"
+                onClick={() => setSelectedMetric('Total Verified Income')}
+              >
                 <div className="text-sm text-muted-foreground">Total Verified Income</div>
                 <div className="text-xl font-bold">₦{passport.totalIncome.toLocaleString()}</div>
                 <div className="text-xs text-muted-foreground mt-1">Range: {passport.incomeRange}</div>
               </div>
-              <div className="p-4 bg-muted/20 border rounded-lg">
+              <div 
+                className="p-4 bg-muted/20 border rounded-lg cursor-pointer hover:bg-muted/30 transition-colors"
+                onClick={() => setSelectedMetric('Total Verified Expenses')}
+              >
                 <div className="text-sm text-muted-foreground">Total Verified Expenses</div>
                 <div className="text-xl font-bold">₦{passport.totalExpenses.toLocaleString()}</div>
                 <div className="text-xs text-muted-foreground mt-1">Range: {passport.expenseRange}</div>
@@ -79,7 +87,10 @@ function Passport() {
             </div>
 
             <div className="space-y-4">
-              <div className="p-6 bg-muted/20 border rounded-lg h-full flex flex-col justify-center shadow-inner">
+              <div 
+                className="p-6 bg-muted/20 border rounded-lg h-full flex flex-col justify-center shadow-inner cursor-pointer hover:bg-muted/30 transition-colors"
+                onClick={() => setSelectedMetric('Operational Status')}
+              >
                 <div className="flex items-center gap-2 mb-3">
                   <Activity className="w-5 h-5 text-accent" />
                   <h4 className="font-semibold text-foreground text-lg">Operational Status</h4>
