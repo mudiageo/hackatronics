@@ -1,52 +1,110 @@
 import { createServerFn } from '@tanstack/react-start'
 import { db } from '../db/in-memory'
 
-export const getDashboardData = createServerFn({ method: 'GET' })
-  .handler(async () => {
-    const transactions = db.transactions
+export interface DashboardData {
+  metricsSummary: {
+    revenue: number
+    expenses: number
+    profit: number
+    cashPosition: number
+  }
+  coverage: {
+    recorded: number
+    settled: number
+    attested: number
+  }
+  recentActivity: {
+    id: string
+    desc: string
+    date: string
+    amount: number
+    type: string
+    status: 'recorded' | 'verified' | 'attested' | 'settled'
+  }[]
+}
 
+export const getDashboardData = createServerFn(
+  'GET',
+  async (): Promise<DashboardData> => {
+    const useMocks = process.env.VITE_USE_MOCKS !== 'false';
+    const org_id = 23;
+
+    if (!useMocks) {
+      // 1. Fetch transactions to calculate revenue/expenses manually (since there's no dashboard-metrics endpoint yet)
+      const txRes = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/passport/${org_id}/transactions?limit=100`)
+      const txData = await txRes.json()
+      
+      let revenue = 0;
+      let expenses = 0;
+      
+      txData.items.forEach((t: any) => {
+        if (t.amount > 0) revenue += t.amount;
+        else expenses += Math.abs(t.amount);
+      });
+      
+      const profit = revenue - expenses;
+      const cashPosition = profit;
+
+      // 2. Fetch coverage from passport endpoint
+      const passportRes = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/passport/${org_id}/passport`)
+      const passportData = await passportRes.json()
+      const cov = passportData.coverage;
+
+      return {
+        metricsSummary: {
+          revenue,
+          expenses,
+          profit,
+          cashPosition
+        },
+        coverage: {
+          recorded: 100, // Normalized for UI bar
+          settled: cov.settled_pct,
+          attested: cov.attested_pct
+        },
+        recentActivity: txData.items.slice(0, 5).map((t: any) => ({
+          id: `TX-${t.id}`,
+          desc: t.description,
+          date: new Date(t.occurred_at).toLocaleDateString(),
+          amount: t.amount,
+          type: t.type,
+          status: t.attestation_level.toLowerCase()
+        }))
+      }
+    }
+
+    // --- MOCK FALLBACK ---
     let revenue = 0
     let expenses = 0
 
-    let totalRecordedVolume = 0
-    let totalSettledVolume = 0
-    let totalAttestedVolume = 0
-
-    for (const tx of transactions) {
-      const absAmount = Math.abs(tx.amount)
-      
-      if (tx.amount > 0) {
-        revenue += tx.amount
-      } else {
-        expenses += absAmount
-      }
-
-      totalRecordedVolume += absAmount
-
-      if (tx.status === 'settled' || tx.status === 'attested') {
-        totalSettledVolume += absAmount
-      }
-      if (tx.status === 'attested') {
-        totalAttestedVolume += absAmount
-      }
-    }
+    db.transactions.forEach(tx => {
+      if (tx.amount > 0) revenue += tx.amount
+      else expenses += Math.abs(tx.amount)
+    })
 
     const profit = revenue - expenses
-    const cashPosition = profit // Simplified calculation for now
+    const cashPosition = profit 
 
-    // Calculate coverage percentages based on volume
-    // To avoid dividing by zero, default to 0 if total volume is 0
+    let recordedCount = 0
+    let settledCount = 0
+    let attestedCount = 0
+
+    db.transactions.forEach(tx => {
+      recordedCount++
+      if (tx.status === 'settled' || tx.status === 'attested') settledCount++
+      if (tx.status === 'attested') attestedCount++
+    })
+
     const coverage = {
-      recorded: 100, // By definition, anything in the ledger is 100% recorded
-      settled: totalRecordedVolume > 0 ? Math.round((totalSettledVolume / totalRecordedVolume) * 100) : 0,
-      attested: totalRecordedVolume > 0 ? Math.round((totalAttestedVolume / totalRecordedVolume) * 100) : 0,
+      recorded: 100,
+      settled: Math.round((settledCount / recordedCount) * 100),
+      attested: Math.round((attestedCount / recordedCount) * 100),
     }
 
-    // Recent activity: Top 5 most recent transactions
-    const recentActivity = transactions.slice(0, 5).map(tx => ({
+    const recentActivity = db.transactions.slice(0, 5).map(tx => ({
       id: tx.id,
       desc: tx.description,
-      date: tx.date.split(' ')[0] + ' ' + tx.date.split(' ')[1] + ' ' + tx.date.split(' ')[2], // Extract just the date part roughly
+      date: tx.date.split(',')[0], 
       amount: tx.amount,
       type: tx.type,
       status: tx.status
@@ -57,9 +115,10 @@ export const getDashboardData = createServerFn({ method: 'GET' })
         revenue,
         expenses,
         profit,
-        cashPosition,
+        cashPosition
       },
       coverage,
-      recentActivity,
+      recentActivity
     }
-  });
+  }
+)
