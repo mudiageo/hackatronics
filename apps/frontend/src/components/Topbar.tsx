@@ -16,9 +16,9 @@ export default function Topbar() {
   const { role, setRole } = useRole();
 
   return (
-    <header className="h-20 px-4 md:px-8 flex items-center justify-between border-b border-border bg-card sticky top-0 z-40 gap-4">
+    <header className="h-20 px-4 md:px-8 flex items-center justify-between border-b border-border bg-card sticky top-0 z-40 gap-2 md:gap-4 overflow-x-auto no-scrollbar">
       <MobileNav />
-      <div className="flex-1 max-w-xl">
+      <div className="flex-1 max-w-xl hidden md:block">
         <div className="relative flex items-center">
           <Search className="w-5 h-5 text-muted-foreground absolute left-3" />
           <input 
@@ -29,11 +29,11 @@ export default function Topbar() {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 ml-4">
+      <div className="flex items-center gap-2 md:gap-4 ml-auto">
         <select 
           value={role}
           onChange={(e) => setRole(e.target.value as any)}
-          className="bg-muted text-foreground text-sm font-medium border-0 rounded-full py-2 px-4 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer"
+          className="bg-muted text-foreground text-sm font-medium border-0 rounded-full py-1.5 px-3 md:py-2 md:px-4 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer max-w-[120px] md:max-w-none"
         >
           <option value="Clinic">Role: Clinic</option>
           <option value="Pharmacy">Role: Pharmacy</option>
@@ -41,7 +41,9 @@ export default function Topbar() {
           <option value="Bank">Role: Bank</option>
         </select>
 
-        <ModeToggle />
+        <div className="hidden sm:block">
+          <ModeToggle />
+        </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
