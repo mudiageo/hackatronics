@@ -17,10 +17,10 @@ class InMemoryDB {
     {
       id: 'TX-10026',
       date: 'Sep 17, 2026 14:30',
-      description: 'Term 1 Tuition Bulk Payment',
-      counterparty: 'Parents Association',
+      description: 'HMO Monthly Capitation Payment',
+      counterparty: 'Reliance HMO',
       amount: 1250000,
-      type: 'Tuition Fees',
+      type: 'Insurance Payout',
       status: 'attested',
       evidenceChain: [
         { id: 'e1', step: 'Invoiced', timestamp: 'Sep 01, 2026 09:00', actor: 'Admin', completed: true },
@@ -31,14 +31,14 @@ class InMemoryDB {
     {
       id: 'TX-10025',
       date: 'Sep 16, 2026 09:15',
-      description: 'Alumni Association Grant',
-      counterparty: 'Alumni Trust',
+      description: 'Ministry of Health Equipment Grant',
+      counterparty: 'Ministry of Health',
       amount: 500000,
-      type: 'Donations',
+      type: 'Government Grant',
       status: 'settled',
       evidenceChain: [
-        { id: 'e1', step: 'Grant Approved', timestamp: 'Sep 10, 2026 10:00', actor: 'Trust Board', completed: true },
-        { id: 'e2', step: 'Transferred', timestamp: 'Sep 15, 2026 11:30', actor: 'Trust Bank', completed: true },
+        { id: 'e1', step: 'Grant Approved', timestamp: 'Sep 10, 2026 10:00', actor: 'Health Board', completed: true },
+        { id: 'e2', step: 'Transferred', timestamp: 'Sep 15, 2026 11:30', actor: 'Central Bank', completed: true },
         { id: 'e5', step: 'Settled', timestamp: 'Sep 16, 2026 09:15', actor: 'Bank Gateway', completed: true },
       ]
     },
