@@ -1,5 +1,5 @@
-import { Transaction } from '../services/transactions.service'
-import { InventoryItem } from '../services/inventory.service'
+import type { Transaction } from '../services/transactions.service'
+import type { InventoryItem } from '../services/inventory.service'
 
 export interface Prescription {
   id: string
