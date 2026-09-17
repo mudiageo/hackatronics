@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { getRequestHeader } from '@tanstack/react-start/server'
 import { db } from '../db/in-memory'
 
 export interface InventoryItem {
@@ -15,7 +16,9 @@ export interface InventoryItem {
 
 export const getInventory = createServerFn({ method: 'GET' }).handler(async () => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
-    const org_id = 23;
+    const cookie = getRequestHeader('cookie') || '';
+    const match = cookie.match(/active_org_id=(\d+)/);
+    const org_id = match ? parseInt(match[1]) : 23;
 
     if (!useMocks) {
       const res = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/inventory/${org_id}/inventory`)
@@ -44,7 +47,9 @@ export const addInventoryItemFn = createServerFn({ method: 'POST' })
   .validator((data: Omit<InventoryItem, 'id' | 'status' | 'movements'>) => data)
   .handler(async ({ data }) => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
-    const org_id = 23;
+    const cookie = getRequestHeader('cookie') || '';
+    const match = cookie.match(/active_org_id=(\d+)/);
+    const org_id = match ? parseInt(match[1]) : 23;
 
     if (!useMocks) {
       // For now, if the backend doesn't support manual addition via this UI component, we throw

@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { getRequestHeader } from '@tanstack/react-start/server'
 import { db } from '../db/in-memory'
 
 export interface ActivityEvent {
@@ -19,7 +20,9 @@ export interface ActivityEvent {
 
 export const getVerifiedActivity = createServerFn({ method: 'GET' }).handler(async () => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
-    const org_id = 23;
+    const cookie = getRequestHeader('cookie') || '';
+    const match = cookie.match(/active_org_id=(\d+)/);
+    const org_id = match ? parseInt(match[1]) : 23;
 
     if (!useMocks) {
       const res = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/passport/${org_id}/verified-activity`)

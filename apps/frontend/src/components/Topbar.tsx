@@ -44,7 +44,22 @@ export default function Topbar() {
 
         <select 
           value={role}
-          onChange={(e) => setRole(e.target.value as any)}
+          onChange={(e) => {
+            const newRole = e.target.value as any;
+            setRole(newRole);
+            
+            // Set cookie for server functions
+            const roleToOrg: Record<string, number> = {
+              'Clinic': 22,
+              'Pharmacy': 23,
+              'Owner': 39,
+              'Bank': 24
+            };
+            document.cookie = `active_org_id=${roleToOrg[newRole]}; path=/`;
+            
+            // Force reload to fetch new data
+            window.location.reload();
+          }}
           className="bg-muted text-foreground text-sm font-medium border-0 rounded-full py-1.5 px-3 md:py-2 md:px-4 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer max-w-[120px] md:max-w-none"
         >
           <option value="Clinic">Role: Clinic</option>

@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { getRequestHeader } from '@tanstack/react-start/server'
 import { db } from '../db/in-memory'
 
 export interface DashboardData {
@@ -25,7 +26,9 @@ export interface DashboardData {
 
 export const getDashboardData = createServerFn({ method: 'GET' }).handler(async () => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
-    const org_id = 23;
+    const cookie = getRequestHeader('cookie') || '';
+    const match = cookie.match(/active_org_id=(\d+)/);
+    const org_id = match ? parseInt(match[1]) : 23;
 
     if (!useMocks) {
       // 1. Fetch transactions to calculate revenue/expenses manually (since there's no dashboard-metrics endpoint yet)
