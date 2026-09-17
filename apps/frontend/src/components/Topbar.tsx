@@ -1,8 +1,9 @@
-import { Search, Bell, User, LogOut, Settings } from "lucide-react";
+import { Search, Bell, User, LogOut, Settings, FileText, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "./mode-toggle";
 import { MobileNav } from "./MobileNav";
 import { useRole } from "./RoleProvider";
+import { Link } from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,6 +31,17 @@ export default function Topbar() {
       </div>
 
       <div className="flex items-center gap-2 md:gap-4 ml-auto">
+        {role === 'Clinic' && (
+          <Link to="/prescribe" className="hidden sm:block">
+            <Button size="sm" className="gap-2 rounded-full px-4"><FileText className="w-4 h-4" /> New Prescription</Button>
+          </Link>
+        )}
+        {role === 'Pharmacy' && (
+          <Link to="/dispense" className="hidden sm:block">
+            <Button size="sm" className="gap-2 rounded-full px-4"><ShieldCheck className="w-4 h-4" /> Verify Code</Button>
+          </Link>
+        )}
+
         <select 
           value={role}
           onChange={(e) => setRole(e.target.value as any)}
