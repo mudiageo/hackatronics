@@ -2,6 +2,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Download, Activity } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { PageHeader } from '../components/PageHeader'
 import { toast } from 'sonner'
 import { getPassportData } from '../services/passport.service'
