@@ -39,3 +39,34 @@ export const getInventory = createServerFn({ method: 'GET' }).handler(async () =
     return db.inventory
   }
 )
+
+export const addInventoryItemFn = createServerFn({ method: 'POST' })
+  .validator((data: Omit<InventoryItem, 'id' | 'status' | 'movements'>) => data)
+  .handler(async ({ data }) => {
+    const useMocks = process.env.VITE_USE_MOCKS !== 'false';
+    const org_id = 23;
+
+    if (!useMocks) {
+      // For now, if the backend doesn't support manual addition via this UI component, we throw
+      throw new Error('Adding inventory items manually is not yet supported by the backend API')
+    }
+
+    // --- MOCK FALLBACK ---
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    let status: 'In Stock' | 'Low Stock' | 'Out of Stock' = 'In Stock';
+    if (data.qtyOnHand === 0) status = 'Out of Stock';
+    else if (data.qtyOnHand <= data.reorderLevel) status = 'Low Stock';
+
+    const newItem: InventoryItem = {
+      ...data,
+      id: `INV-${Math.floor(Math.random() * 1000) + 1000}`,
+      status,
+      movements: [
+        { id: `m-${Math.random()}`, date: new Date().toISOString().split('T')[0], type: 'In', qty: data.qtyOnHand, reference: 'Initial Stock' }
+      ]
+    };
+    
+    db.inventory.push(newItem);
+    return newItem;
+  });

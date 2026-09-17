@@ -1,16 +1,20 @@
 import { createServerFn } from '@tanstack/react-start'
 import { db } from '../db/in-memory'
 
-export interface VerifiedActivityItem {
-  id: string
-  timestamp: string
-  type: string
-  description: string
-  partyA: string
-  partyB: string
-  amount: number
-  status: 'verified' | 'settled'
-  evidenceChain: { id: string, step: string, timestamp: string, actor: string, completed: boolean }[]
+export interface ActivityEvent {
+  id: string;
+  timestamp: string;
+  type: string;
+  description: string;
+  partyA: string;
+  partyB: string;
+  amount: number;
+  status: 'pending' | 'verified' | 'settled';
+  steps: {
+    label: string;
+    status: 'completed' | 'current' | 'upcoming';
+    date?: string;
+  }[];
 }
 
 export const getVerifiedActivity = createServerFn({ method: 'GET' }).handler(async () => {
@@ -22,7 +26,7 @@ export const getVerifiedActivity = createServerFn({ method: 'GET' }).handler(asy
       if (!res.ok) throw new Error('Failed to fetch activity')
       const data = await res.json()
       
-      return data.items.map((d: any) => ({
+      return data.items.map((d: any): ActivityEvent => ({
         id: `DISP-${d.dispense_id}`,
         timestamp: new Date(d.dispensed_at).toLocaleString(),
         type: 'Dispense',
@@ -31,33 +35,49 @@ export const getVerifiedActivity = createServerFn({ method: 'GET' }).handler(asy
         partyB: d.to_org,
         amount: d.amount,
         status: 'settled',
-        // Map backend flat strings to UI objects (mocking timestamps since backend doesn't have them yet)
-        evidenceChain: d.steps.map((s: string, idx: number) => ({
-          id: `step-${idx}`,
-          step: s.charAt(0).toUpperCase() + s.slice(1).replace('_', ' '),
-          timestamp: new Date(d.dispensed_at).toLocaleString(), // Mocking timestamp for now
-          actor: 'System',
-          completed: true
+        steps: d.steps.map((s: string, idx: number) => ({
+          label: s.charAt(0).toUpperCase() + s.slice(1).replace('_', ' '),
+          status: 'completed',
+          date: new Date(d.dispensed_at).toLocaleString()
         }))
       }))
     }
 
     // --- MOCK FALLBACK ---
-    const verifiedTx = db.transactions.filter(
-      (tx) => tx.status === 'attested' || tx.status === 'settled'
+    const verifiedTxs = db.transactions.filter(tx => 
+      (tx.status === 'attested' || tx.status === 'settled') && 
+      tx.evidenceChain && tx.evidenceChain.length > 0
     )
-    return verifiedTx.map((tx): VerifiedActivityItem => {
+
+    const activities: ActivityEvent[] = verifiedTxs.map(tx => {
+      // Map evidence chain to steps
+      const steps = tx.evidenceChain!.map((e, index) => ({
+        label: e.step,
+        status: e.completed ? 'completed' as const : 'current' as const,
+        date: e.timestamp
+      }))
+
+      // If it's not fully settled, add an upcoming "Settled" step visually
+      if (tx.status !== 'attested' && !steps.some(s => s.label === 'Settled')) {
+        steps.push({
+          label: 'Settled',
+          status: 'upcoming',
+        })
+      }
+
       return {
         id: tx.id,
-        timestamp: tx.date,
+        timestamp: tx.date, // We use the date as the timestamp
         type: tx.type,
         description: tx.description,
-        partyA: 'HealthPlus Pharmacy',
+        partyA: 'HealthPlus Pharmacy', // Hardcoded self business for now
         partyB: tx.counterparty,
-        amount: Math.abs(tx.amount),
+        amount: Math.abs(tx.amount), // Display as absolute positive value in activity log
         status: tx.status === 'attested' ? 'settled' : 'verified',
-        evidenceChain: tx.evidenceChain || [],
+        steps
       }
     })
+
+    return activities;
   }
 )
