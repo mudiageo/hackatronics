@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { TrendingUp, TrendingDown, Activity, Banknote, ArrowRight, CheckCircle2, Circle, CheckCircle, ShieldCheck } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { getDashboardData } from "../services/dashboard.service"
 import { PageHeader } from "../components/PageHeader"
 
