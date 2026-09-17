@@ -10,31 +10,34 @@ export const Route = createFileRoute('/passport')({
   loader: async () => await getPassportData(),
 })
 
-function TrustScoreCircle({ score }: { score: number }) {
-  const radius = 56; 
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (score / 100) * circumference;
+import { RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts'
+import { ChartContainer } from '@/components/ui/chart'
 
-  let strokeColor = "text-green-500";
-  if (score < 50) strokeColor = "text-red-500";
-  else if (score < 80) strokeColor = "text-yellow-500";
+function TrustScoreCircle({ score }: { score: number }) {
+  let strokeColor = "hsl(var(--primary))";
+  if (score < 50) strokeColor = "hsl(var(--destructive))";
+  else if (score < 80) strokeColor = "hsl(var(--alert) / 0.8)"; // or just a string color
+  else strokeColor = "#22c55e"; // green-500
+
+  const chartData = [{ name: "score", value: score, fill: strokeColor }]
+  const chartConfig = { score: { label: "Trust Score", color: strokeColor } }
 
   return (
     <div className="relative flex items-center justify-center w-36 h-36 group">
-      <svg className="absolute w-full h-full transform -rotate-90">
-        {/* Background track */}
-        <circle 
-          cx="72" cy="72" r={radius} 
-          className="text-muted/30" strokeWidth="8" stroke="currentColor" fill="transparent" 
-        />
-        {/* Progress track */}
-        <circle 
-          cx="72" cy="72" r={radius} 
-          className={`${strokeColor} transition-all duration-1000 ease-out`} 
-          strokeWidth="8" stroke="currentColor" fill="transparent" 
-          strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round"
-        />
-      </svg>
+      <ChartContainer config={chartConfig} className="w-full h-full absolute inset-0">
+        <RadialBarChart
+          data={chartData}
+          innerRadius="75%"
+          outerRadius="100%"
+          startAngle={90}
+          endAngle={-270}
+          barSize={10}
+        >
+          <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
+          <RadialBar dataKey="value" cornerRadius={10} background={{ fill: 'hsl(var(--muted))', opacity: 0.3 }} />
+        </RadialBarChart>
+      </ChartContainer>
+      
       <div className="flex flex-col items-center justify-center relative z-10 bg-background rounded-full w-24 h-24 shadow-sm border border-border">
         <span className="text-3xl font-bold text-foreground group-hover:scale-110 transition-transform">{score}</span>
         <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-1">Trust</span>

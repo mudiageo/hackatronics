@@ -6,6 +6,9 @@ import { Badge } from "@/components/ui/badge"
 import { getDashboardData } from "../services/dashboard.service"
 import { PageHeader } from "../components/PageHeader"
 
+import { BarChart, Bar, XAxis, YAxis } from 'recharts'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+
 export const Route = createFileRoute('/')({
   component: Dashboard,
   loader: async () => {
@@ -27,11 +30,26 @@ function getStatusBadge(status: string) {
 function Dashboard() {
   const { metricsSummary, coverage, recentActivity } = Route.useLoaderData()
 
+  const coverageData = [
+    {
+      name: "Coverage",
+      attested: coverage.attested,
+      settledOnly: coverage.settled - coverage.attested,
+      recordedOnly: 100 - coverage.settled,
+    }
+  ]
+
+  const coverageConfig = {
+    attested: { label: "Attested", color: "#16a34a" },
+    settledOnly: { label: "Settled", color: "hsl(var(--accent))" },
+    recordedOnly: { label: "Recorded", color: "#d1d5db" },
+  }
+
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
       <PageHeader 
         title="Business Health" 
-        description="Overview of your financial passport and recent transactions." 
+        description="Monitor the financial and operational health of the business based on verified data." 
       />
 
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
@@ -95,16 +113,20 @@ function Dashboard() {
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Nested Horizontal Bar */}
-              <div className="relative h-6 w-full rounded-full overflow-hidden bg-muted">
-                {/* Background: 100% Recorded */}
-                <div className="absolute top-0 left-0 h-full bg-gray-300 w-full transition-all" title="100% Recorded"></div>
-                {/* Middle: 88% Settled */}
-                <div className="absolute top-0 left-0 h-full bg-accent transition-all" style={{ width: `${coverage.settled}%` }} title={`${coverage.settled}% Settled`}></div>
-                {/* Foreground: 78% Attested */}
-                <div className="absolute top-0 left-0 h-full bg-green-600 transition-all" style={{ width: `${coverage.attested}%` }} title={`${coverage.attested}% Attested`}></div>
+              <div className="h-8 w-full rounded-full overflow-hidden">
+                <ChartContainer config={coverageConfig} className="h-full w-full">
+                  <BarChart data={coverageData} layout="vertical" stackOffset="expand">
+                    <XAxis type="number" hide domain={[0, 100]} />
+                    <YAxis dataKey="name" type="category" hide />
+                    <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                    <Bar dataKey="attested" stackId="a" fill="var(--color-attested)" />
+                    <Bar dataKey="settledOnly" stackId="a" fill="var(--color-settledOnly)" />
+                    <Bar dataKey="recordedOnly" stackId="a" fill="var(--color-recordedOnly)" />
+                  </BarChart>
+                </ChartContainer>
               </div>
               <div className="flex flex-wrap gap-2 text-sm font-medium text-muted-foreground items-center">
-                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-gray-300"></div> 100% Recorded</div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-[#d1d5db]"></div> 100% Recorded</div>
                 <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
                 <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-accent"></div> {coverage.settled}% Settled</div>
                 <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
