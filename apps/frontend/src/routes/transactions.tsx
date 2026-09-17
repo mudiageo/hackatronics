@@ -8,7 +8,7 @@ export const Route = createFileRoute('/transactions')({
 
 function Transactions() {
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6 max-w-7xl mx-auto bg-background min-h-screen w-full">
+    <div className="flex-1 space-y-6 p-6 md:p-8">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">Transactions</h2>

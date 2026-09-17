@@ -27,7 +27,7 @@ function Dashboard() {
   const { metricsSummary, coverage, recentActivity } = Route.useLoaderData()
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6 max-w-7xl mx-auto bg-background min-h-screen">
+    <div className="flex-1 space-y-6 p-6 md:p-8">
       <div className="flex items-center justify-between space-y-2 mb-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">Business Health</h2>

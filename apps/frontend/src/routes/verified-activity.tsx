@@ -7,7 +7,7 @@ export const Route = createFileRoute('/verified-activity')({
 
 function VerifiedActivity() {
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6 max-w-7xl mx-auto bg-background min-h-screen w-full">
+    <div className="flex-1 space-y-6 p-6 md:p-8">
       <div className="mb-6">
         <h2 className="text-2xl font-bold tracking-tight text-foreground">Verified Activity</h2>
         <p className="text-muted-foreground text-sm">A trust-focused view — shows only activity that has evidence attached.</p>
