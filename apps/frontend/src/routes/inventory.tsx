@@ -31,34 +31,41 @@ function getStatusBadge(status: string) {
   }
 }
 
+import { useRouter } from '@tanstack/react-router'
+import { addInventoryItemFn } from '../services/inventory.service'
+
 function Inventory() {
-  const initialInventory = Route.useLoaderData()
-  const [inventory, setInventory] = useState<InventoryItem[]>(initialInventory)
+  const inventory = Route.useLoaderData()
+  const router = useRouter()
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleAddItem = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAddItem = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setIsSubmitting(true)
     const formData = new FormData(e.currentTarget)
     
-    const qty = Number(formData.get('qtyOnHand'))
-    const reorder = Number(formData.get('reorderLevel'))
-    
-    const newItem: InventoryItem = {
-      id: `INV-${Math.floor(Math.random() * 1000) + 100}`,
-      name: formData.get('name') as string,
-      sku: formData.get('sku') as string,
-      qtyOnHand: qty,
-      reorderLevel: reorder,
-      unitPrice: Number(formData.get('unitPrice')),
-      costPrice: Number(formData.get('costPrice')),
-      status: qty === 0 ? 'Out of Stock' : (qty <= reorder ? 'Low Stock' : 'In Stock'),
-      movements: []
+    try {
+      await addInventoryItemFn({
+        data: {
+          name: formData.get('name') as string,
+          sku: formData.get('sku') as string,
+          qtyOnHand: Number(formData.get('qtyOnHand')),
+          reorderLevel: Number(formData.get('reorderLevel')),
+          unitPrice: Number(formData.get('unitPrice')),
+          costPrice: Number(formData.get('costPrice')),
+        }
+      })
+      
+      await router.invalidate()
+      setIsAddModalOpen(false)
+      toast.success('Inventory item added successfully')
+    } catch (err) {
+      toast.error('Failed to add inventory item')
+    } finally {
+      setIsSubmitting(false)
     }
-
-    setInventory([newItem, ...inventory])
-    setIsAddModalOpen(false)
-    toast.success('Inventory item added successfully')
   }
 
   return (

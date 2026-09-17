@@ -29,32 +29,43 @@ function getStatusBadge(status: string) {
   }
 }
 
+import { useRouter } from '@tanstack/react-router'
+import { addTransactionFn } from '../services/transactions.service'
+
 function Transactions() {
-  const initialTransactions = Route.useLoaderData()
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions)
+  const transactions = Route.useLoaderData()
+  const router = useRouter()
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [filterLevel, setFilterLevel] = useState<string>('all')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleAddTransaction = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAddTransaction = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setIsSubmitting(true)
     const formData = new FormData(e.currentTarget)
     
-    const newTx: Transaction = {
-      id: `TX-${Math.floor(Math.random() * 10000) + 10000}`,
-      date: formData.get('date') as string || new Date().toISOString().split('T')[0],
-      description: formData.get('description') as string,
-      counterparty: formData.get('counterparty') as string,
-      amount: Number(formData.get('amount')),
-      type: formData.get('type') as string,
-      status: 'recorded'
+    try {
+      await addTransactionFn({
+        data: {
+          date: formData.get('date') as string || new Date().toISOString().split('T')[0],
+          description: formData.get('description') as string,
+          counterparty: formData.get('counterparty') as string,
+          amount: Number(formData.get('amount')),
+          type: formData.get('type') as string,
+        }
+      })
+      
+      await router.invalidate()
+      setIsAddModalOpen(false)
+      toast.success('Transaction recorded successfully', {
+        description: 'This transaction is self-reported and pending verification.'
+      })
+    } catch (err) {
+      toast.error('Failed to record transaction')
+    } finally {
+      setIsSubmitting(false)
     }
-
-    setTransactions([newTx, ...transactions])
-    setIsAddModalOpen(false)
-    toast.success('Transaction recorded successfully', {
-      description: 'This transaction is self-reported and pending verification.'
-    })
   }
 
   const filteredTransactions = transactions.filter(tx => 
@@ -115,7 +126,9 @@ function Transactions() {
                   <Input id="date" name="date" type="date" required defaultValue={new Date().toISOString().split('T')[0]} />
                 </div>
                 <DialogFooter className="pt-4">
-                  <Button type="submit">Record Transaction</Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? 'Recording...' : 'Record Transaction'}
+                  </Button>
                 </DialogFooter>
               </form>
             </DialogContent>
