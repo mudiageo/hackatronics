@@ -16,9 +16,9 @@ export interface PrescriptionIn {
   items: ItemIn[];
 }
 
-export const generatePrescriptionFn = createServerFn(
-  'POST',
-  async (payload: PrescriptionIn) => {
+export const generatePrescriptionFn = createServerFn({ method: 'POST' })
+  .validator((data: PrescriptionIn) => data)
+  .handler(async ({ data: payload }) => {
     // Check if we should use mocks
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     
@@ -70,9 +70,9 @@ export const generatePrescriptionFn = createServerFn(
   }
 )
 
-export const verifyPrescriptionFn = createServerFn(
-  'POST',
-  async (payload: { code: string; patient_id: number; org_id: number }) => {
+export const verifyPrescriptionFn = createServerFn({ method: 'POST' })
+  .validator((data: { code: string; patient_id: number; org_id: number }) => data)
+  .handler(async ({ data: payload }) => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     
     if (!useMocks) {
@@ -114,9 +114,9 @@ export const verifyPrescriptionFn = createServerFn(
   }
 )
 
-export const dispensePrescriptionFn = createServerFn(
-  'POST',
-  async (payload: { code: string; patient_id: number; org_id: number; pharmacist_id: number }) => {
+export const dispensePrescriptionFn = createServerFn({ method: 'POST' })
+  .validator((data: { code: string; patient_id: number; org_id: number; pharmacist_id: number }) => data)
+  .handler(async ({ data: payload }) => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     
     if (!useMocks) {

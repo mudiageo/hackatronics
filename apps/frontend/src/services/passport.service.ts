@@ -18,9 +18,7 @@ export interface PassportData {
   }
 }
 
-export const getPassportData = createServerFn(
-  'GET',
-  async () => {
+export const getPassportData = createServerFn({ method: 'GET' }).handler(async () => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     const org_id = 23;
 

@@ -13,9 +13,7 @@ export interface InventoryItem {
   movements?: { id: string, date: string, type: 'In' | 'Out', qty: number, reference: string }[]
 }
 
-export const getInventory = createServerFn(
-  'GET',
-  async () => {
+export const getInventory = createServerFn({ method: 'GET' }).handler(async () => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     const org_id = 23;
 

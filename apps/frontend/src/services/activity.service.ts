@@ -13,9 +13,7 @@ export interface VerifiedActivityItem {
   evidenceChain: { id: string, step: string, timestamp: string, actor: string, completed: boolean }[]
 }
 
-export const getVerifiedActivity = createServerFn(
-  'GET',
-  async () => {
+export const getVerifiedActivity = createServerFn({ method: 'GET' }).handler(async () => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     const org_id = 23;
 

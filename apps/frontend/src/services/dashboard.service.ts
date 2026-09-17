@@ -23,9 +23,7 @@ export interface DashboardData {
   }[]
 }
 
-export const getDashboardData = createServerFn(
-  'GET',
-  async (): Promise<DashboardData> => {
+export const getDashboardData = createServerFn({ method: 'GET' }).handler(async () => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     const org_id = 23;
 

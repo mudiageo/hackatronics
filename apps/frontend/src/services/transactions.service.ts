@@ -12,9 +12,7 @@ export interface Transaction {
   evidenceChain?: { id: string, step: string, timestamp: string, actor: string, completed: boolean }[]
 }
 
-export const getTransactions = createServerFn(
-  'GET',
-  async () => {
+export const getTransactions = createServerFn({ method: 'GET' }).handler(async () => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     const org_id = 23; // Hardcoded for demo
 
