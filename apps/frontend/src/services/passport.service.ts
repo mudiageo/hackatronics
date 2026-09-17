@@ -1,4 +1,4 @@
-import { createServerFn } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
 
 export interface PassportMilestone {
   id: string;
