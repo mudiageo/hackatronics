@@ -1,15 +1,30 @@
-# Financial Passport — Product Spec & UI Build Plan
+# Financial Passport
 
-**Wema Hackathon**
+> **Wema Hackathon Submission**
 
-## 1. Core Idea
-We are not building another accounting or inventory tool. We are building a system that helps small businesses record their activity, understand their finances, and gradually build a verifiable financial history.
+## 🏆 Hackathon Judging Criteria
 
-We don't just record what a business says happened — we attach evidence to business activity, so the business builds a financial history that can be trusted by banks, lenders, and partners.
+### 1. Project Description
+**Financial Passport** is a system that helps small businesses record their activity, understand their finances, and gradually build a verifiable financial history. We don't just record what a business says happened — we attach evidence to business activity using cryptographic proofs and multi-party attestation. This allows businesses to build a reliable financial history that can be fully trusted by banks, lenders, and partners. 
+
+Our core pipeline is: `Business Activity → Records → Evidence → Financial Intelligence → Business Health → Financial Passport`
+
+Every transaction has an attestation level (Grey: Self-Reported, Blue: Settled, Green: Attested) based on the evidence chain backing it up.
+
+### 2. Live Frontend Application
+👉 **[Insert Frontend Deployment Link Here]**
+
+### 3. Live Backend API
+👉 **[Insert Backend API Link Here]**
+
+### 4. Recorded Loom Demo
+👉 **[Insert Loom Demo Link Here]**
+
+---
+
+## 🏗️ Product Spec & Architecture
 
 ### The Pipeline
-`Business Activity → Records → Evidence → Financial Intelligence → Business Health → Financial Passport`
-
 | Stage | What it means |
 | --- | --- |
 | **Business Activity** | A sale, a purchase, a stock movement, a payment — anything that happens |
@@ -19,33 +34,13 @@ We don't just record what a business says happened — we attach evidence to bus
 | **Business Health** | A digestible score/summary of how the business is doing |
 | **Financial Passport** | The exportable, shareable, evidence-backed financial history of the business |
 
-*This story should guide every UI decision: every screen should make it obvious whether something is "just recorded" or "verified with evidence."*
+*This story guides every UI decision: every screen makes it obvious whether something is "just recorded" or "verified with evidence."*
 
----
-
-## 2. MVP Scope
-To ship in hackathon time, the MVP is 5 pages:
-1. **Dashboard / Business Health**
-2. **Transactions**
-3. **Inventory**
-4. **Verified Activity**
-5. **Financial Passport**
-
-*Note: Transaction Details is not a separate page — it's a slide-over panel opened from the Transactions (and Verified Activity) list.*
-
----
-
-## 3. Tech Stack
-- **Monorepo**: Vite+ (VoidZero)
+### Tech Stack
+- **Monorepo Structure**
 - **Frontend**: TanStack Start + React + shadcn/ui + Tailwind CSS
-- **Backend**: Python FastAPI
+- **Backend**: Python FastAPI + SQLModel + PostgreSQL
 
----
-
-## 4. Mock Data Layer Strategy
-Since the API contract isn't settled yet, the frontend is structured so that swapping mocks for real API calls is a one-file change.
-
-- Use a `src/services/` folder with one interface per domain.
-- Two implementations: `mock` and `api`.
-- UI code only imports from `services/`, never directly from mock data or fetch calls.
-- Use an environment flag (`VITE_USE_MOCKS`) to toggle between mock fixtures and real API calls.
+### Mock Data Fallback Strategy
+Since hackathon API contracts can be volatile, the frontend is structured to gracefully fall back to an in-memory database.
+By changing the `VITE_USE_MOCKS` environment variable, the application instantly switches between real Python FastAPI endpoints and realistic in-memory mock fixtures.
