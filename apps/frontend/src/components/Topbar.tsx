@@ -1,5 +1,6 @@
 import { Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "./mode-toggle";
 
 export default function Topbar() {
   return (
@@ -10,17 +11,19 @@ export default function Topbar() {
           <input 
             type="text" 
             placeholder="Search records, transactions, products..." 
-            className="w-full bg-muted border-none rounded-full py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 outline-none"
+            className="w-full bg-muted border-none rounded-full py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 outline-none text-foreground placeholder:text-muted-foreground"
           />
         </div>
       </div>
 
       <div className="flex items-center gap-4 ml-4">
-        <select className="bg-muted text-sm font-medium border-0 rounded-full py-2 px-4 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer">
+        <select className="bg-muted text-foreground text-sm font-medium border-0 rounded-full py-2 px-4 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer">
           <option>Role: Clinic</option>
           <option>Role: Pharmacy</option>
           <option>Role: Bank</option>
         </select>
+
+        <ModeToggle />
 
         <Button variant="ghost" size="icon" className="rounded-full bg-muted text-muted-foreground hover:text-foreground">
           <Bell className="w-5 h-5" />

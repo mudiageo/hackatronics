@@ -35,6 +35,36 @@
   --radius: 1rem;
 }
 
+.dark {
+  --background: oklch(0.15 0.01 264);
+  --foreground: oklch(0.98 0.005 264);
+  
+  --card: oklch(0.18 0.01 264);
+  --card-foreground: oklch(0.98 0.005 264);
+  
+  --popover: oklch(0.18 0.01 264);
+  --popover-foreground: oklch(0.98 0.005 264);
+  
+  --primary: oklch(0.65 0.15 264);
+  --primary-foreground: oklch(1 0 0);
+  
+  --secondary: oklch(0.25 0.01 264);
+  --secondary-foreground: oklch(0.98 0.005 264);
+  
+  --muted: oklch(0.25 0.01 264);
+  --muted-foreground: oklch(0.65 0.01 264);
+  
+  --accent: oklch(0.65 0.15 264);
+  --accent-foreground: oklch(1 0 0);
+  
+  --destructive: oklch(0.55 0.2 29);
+  --destructive-foreground: oklch(1 0 0);
+  
+  --border: oklch(0.25 0.01 264);
+  --input: oklch(0.25 0.01 264);
+  --ring: oklch(0.65 0.15 264);
+}
+
 @theme inline {
   --font-sans: "Inter", "Geist", system-ui, sans-serif;
   --color-background: var(--background);
