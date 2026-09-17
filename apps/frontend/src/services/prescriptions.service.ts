@@ -24,7 +24,7 @@ export const generatePrescriptionFn = createServerFn(
     
     if (!useMocks) {
       // Integration with real FastAPI backend
-      const res = await fetch('http://localhost:8000/prescriptions', {
+      const res = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/prescriptions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -76,7 +76,7 @@ export const verifyPrescriptionFn = createServerFn(
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     
     if (!useMocks) {
-      const url = `http://localhost:8000/dispense/verify?code=${payload.code}&patient_id=${payload.patient_id}&org_id=${payload.org_id}`
+      const url = `${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/dispense/verify?code=${payload.code}&patient_id=${payload.patient_id}&org_id=${payload.org_id}`
       const res = await fetch(url)
       const data = await res.json()
       if (!data.valid) throw new Error(data.message || data.reason_code)
@@ -120,7 +120,7 @@ export const dispensePrescriptionFn = createServerFn(
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     
     if (!useMocks) {
-      const res = await fetch('http://localhost:8000/dispense', {
+      const res = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/dispense`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
