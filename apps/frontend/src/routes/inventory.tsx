@@ -118,8 +118,8 @@ function Inventory() {
         }
       />
       
-      <div className="border rounded-lg overflow-hidden bg-card shadow-sm">
-        <Table>
+      <div className="border rounded-lg bg-card shadow-sm overflow-x-auto">
+        <Table className="min-w-[600px]">
           <TableHeader>
             <TableRow className="bg-muted/50 border-border">
               <TableHead className="font-medium text-foreground">Item Name</TableHead>
