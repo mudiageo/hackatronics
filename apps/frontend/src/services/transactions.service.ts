@@ -41,3 +41,27 @@ export const getTransactions = createServerFn({ method: 'GET' }).handler(async (
     return db.transactions
   }
 )
+
+export const addTransactionFn = createServerFn({ method: 'POST' })
+  .validator((data: Omit<Transaction, 'id' | 'status' | 'evidenceChain'>) => data)
+  .handler(async ({ data }) => {
+    const useMocks = process.env.VITE_USE_MOCKS !== 'false';
+    const org_id = 23;
+
+    if (!useMocks) {
+      // For now, if the backend doesn't support manual addition via this UI component, we throw
+      throw new Error('Adding transactions manually is not yet supported by the backend API')
+    }
+
+    // --- MOCK FALLBACK ---
+    await new Promise(resolve => setTimeout(resolve, 400));
+    
+    const newTx: Transaction = {
+      ...data,
+      id: `TX-${Math.floor(Math.random() * 10000) + 10000}`,
+      status: 'recorded'
+    };
+    
+    db.transactions.push(newTx);
+    return newTx;
+  });
