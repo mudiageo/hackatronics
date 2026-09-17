@@ -9,9 +9,9 @@ const MOCK_DASHBOARD_DATA = {
     cashPosition: -490000,
   },
   coverage: {
-    attested: 45,
-    settled: 30,
-    recorded: 25,
+    attested: 78,
+    settled: 88,
+    recorded: 100,
   },
   recentActivity: [
     { id: 1, desc: 'Term 1 Tuition Bulk Payment', date: 'Sep 14, 2026', amount: 1250000, type: 'Tuition Fees', status: 'attested' },
