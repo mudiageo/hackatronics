@@ -1,3 +1,4 @@
+
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -6,8 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { getDashboardData } from "../services/dashboard.service"
 import { PageHeader } from "../components/PageHeader"
 
-import { BarChart, Bar, XAxis, YAxis } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { CoverageChart } from '../components/CoverageChart'
 
 export const Route = createFileRoute('/')({
   component: Dashboard,
@@ -51,7 +51,7 @@ function Dashboard() {
         title="Business Health" 
         description="Monitor the financial and operational health of the business based on verified data." 
       />
-
+      
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
         {/* Revenue Card */}
         <Card className="rounded-2xl shadow-sm border-border overflow-hidden">
@@ -114,16 +114,7 @@ function Dashboard() {
             <CardContent className="space-y-6">
               {/* Nested Horizontal Bar */}
               <div className="h-8 w-full rounded-full overflow-hidden">
-                <ChartContainer config={coverageConfig} className="h-full w-full">
-                  <BarChart data={coverageData} layout="vertical" stackOffset="expand">
-                    <XAxis type="number" hide domain={[0, 100]} />
-                    <YAxis dataKey="name" type="category" hide />
-                    <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                    <Bar dataKey="attested" stackId="a" fill="var(--color-attested)" />
-                    <Bar dataKey="settledOnly" stackId="a" fill="var(--color-settledOnly)" />
-                    <Bar dataKey="recordedOnly" stackId="a" fill="var(--color-recordedOnly)" />
-                  </BarChart>
-                </ChartContainer>
+                <CoverageChart coverageData={coverageData} coverageConfig={coverageConfig} />
               </div>
               <div className="flex flex-wrap gap-2 text-sm font-medium text-muted-foreground items-center">
                 <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-[#d1d5db]"></div> 100% Recorded</div>
