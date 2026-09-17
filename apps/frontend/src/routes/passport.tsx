@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Download } from 'lucide-react'
+import { Download, Activity } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '../components/PageHeader'
 import { toast } from 'sonner'
@@ -9,6 +9,39 @@ export const Route = createFileRoute('/passport')({
   component: Passport,
   loader: async () => await getPassportData(),
 })
+
+function TrustScoreCircle({ score }: { score: number }) {
+  const radius = 56; 
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (score / 100) * circumference;
+
+  let strokeColor = "text-green-500";
+  if (score < 50) strokeColor = "text-red-500";
+  else if (score < 80) strokeColor = "text-yellow-500";
+
+  return (
+    <div className="relative flex items-center justify-center w-36 h-36 group">
+      <svg className="absolute w-full h-full transform -rotate-90">
+        {/* Background track */}
+        <circle 
+          cx="72" cy="72" r={radius} 
+          className="text-muted/30" strokeWidth="8" stroke="currentColor" fill="transparent" 
+        />
+        {/* Progress track */}
+        <circle 
+          cx="72" cy="72" r={radius} 
+          className={`${strokeColor} transition-all duration-1000 ease-out`} 
+          strokeWidth="8" stroke="currentColor" fill="transparent" 
+          strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round"
+        />
+      </svg>
+      <div className="flex flex-col items-center justify-center relative z-10 bg-background rounded-full w-24 h-24 shadow-sm border border-border">
+        <span className="text-3xl font-bold text-foreground group-hover:scale-110 transition-transform">{score}</span>
+        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-1">Trust</span>
+      </div>
+    </div>
+  )
+}
 
 function Passport() {
   const passport = Route.useLoaderData()
@@ -41,14 +74,13 @@ function Passport() {
           <p className="text-sm mt-2">Coverage: {passport.coveragePeriod}</p>
         </div>
         
-        <div className="flex flex-col items-center justify-center mb-8">
-          <Link to="/verified-activity" className="w-32 h-32 rounded-full border-4 border-green-500 flex flex-col items-center justify-center hover:bg-green-50 dark:hover:bg-green-950/20 transition-colors cursor-pointer group" title="View Evidence Drill-down">
-            <span className="text-4xl font-bold text-green-600 group-hover:scale-110 transition-transform">{passport.trustScore}</span>
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground mt-1">Trust Score</span>
+        <div className="flex flex-col items-center justify-center mb-10">
+          <Link to="/verified-activity" className="hover:opacity-80 transition-opacity cursor-pointer" title="View Evidence Drill-down">
+            <TrustScoreCircle score={passport.trustScore} />
           </Link>
         </div>
         
-        <div className="grid grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-2 gap-6 mb-10">
           <Link to="/transactions" search={{ filter: 'attested' } as any} className="p-4 border rounded-lg text-center bg-muted/20 hover:bg-muted/50 transition-colors cursor-pointer block" title="View Verified Transactions">
             <p className="text-sm text-muted-foreground mb-1">Verified Transactions</p>
             <p className="text-2xl font-bold">{passport.verifiedTransactions}</p>
@@ -59,7 +91,46 @@ function Passport() {
           </Link>
         </div>
         
-        <div>
+        <div className="mb-8">
+          <h3 className="font-bold border-b pb-2 mb-4">Business Operating Profile</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div className="space-y-4">
+              <div className="p-4 bg-muted/20 border rounded-lg">
+                <div className="text-sm text-muted-foreground">Total Verified Income</div>
+                <div className="text-xl font-bold">₦{passport.totalIncome.toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground mt-1">Range: {passport.incomeRange}</div>
+              </div>
+              <div className="p-4 bg-muted/20 border rounded-lg">
+                <div className="text-sm text-muted-foreground">Total Verified Expenses</div>
+                <div className="text-xl font-bold">₦{passport.totalExpenses.toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground mt-1">Range: {passport.expenseRange}</div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="p-6 bg-muted/20 border rounded-lg h-full flex flex-col justify-center shadow-inner">
+                <div className="flex items-center gap-2 mb-3">
+                  <Activity className="w-5 h-5 text-accent" />
+                  <h4 className="font-semibold text-foreground text-lg">Operational Status</h4>
+                </div>
+                <div className="inline-flex w-fit px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold mb-4">
+                  {passport.operatingStatus}
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {passport.operatingStatusDesc}
+                </p>
+                <div className="mt-6 pt-4 border-t border-border/50">
+                  <div className="text-xs text-muted-foreground mb-1">Fixed Operational Cost</div>
+                  <div className="font-semibold text-lg text-foreground">₦{passport.operationalCost.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">/ mo</span></div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+
+        <div className="mt-10">
           <h3 className="font-bold border-b pb-2 mb-4">Timeline Milestones</h3>
           <ul className="space-y-4">
             {passport.milestones.map((milestone) => (
@@ -73,6 +144,7 @@ function Passport() {
             ))}
           </ul>
         </div>
+
       </div>
     </div>
   )

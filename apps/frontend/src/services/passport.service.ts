@@ -13,16 +13,36 @@ export interface PassportData {
   trustScore: number;
   verifiedTransactions: number;
   evidenceDocuments: number;
+  flags: number;
   milestones: PassportMilestone[];
+
+  // Business Operating Profile
+  totalIncome: number;
+  totalExpenses: number;
+  incomeRange: string;
+  expenseRange: string;
+  operationalCost: number;
+  operatingStatus: string;
+  operatingStatusDesc: string;
 }
 
 const MOCK_PASSPORT_DATA: PassportData = {
-  businessName: 'Acme Corp',
-  industry: 'Retail & E-commerce',
-  coveragePeriod: 'Jan 2026 - Sep 2026',
-  trustScore: 85,
-  verifiedTransactions: 142,
-  evidenceDocuments: 156,
+  businessName: 'City General Hospital',
+  industry: 'Healthcare Services',
+  coveragePeriod: 'Jan 2026 - Present',
+  trustScore: 94,
+  verifiedTransactions: 1245,
+  evidenceDocuments: 3750,
+  flags: 0,
+
+  // Business Operating Profile Mock Data
+  totalIncome: 14500000,
+  totalExpenses: 9800000,
+  incomeRange: '₦1.2M - ₦1.8M / month',
+  expenseRange: '₦800K - ₦1.1M / month',
+  operationalCost: 4500000,
+  operatingStatus: 'Healthy & Expanding',
+  operatingStatusDesc: 'Business maintains a consistent 32% profit margin with low volatility in operational costs.',
   milestones: [
     {
       id: 'ms-2',
