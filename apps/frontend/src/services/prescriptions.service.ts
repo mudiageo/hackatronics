@@ -2,76 +2,146 @@ import { createServerFn } from '@tanstack/react-start'
 import { db } from '../db/in-memory'
 import type { Prescription } from '../db/in-memory'
 
+// Expected Backend Schema
+export interface ItemIn {
+  drug_id: int | number;
+  dose: string;
+  frequency_per_day: number;
+  days: number;
+}
+
+export interface PrescriptionIn {
+  patient_id: number;
+  prescriber_id: number;
+  items: ItemIn[];
+}
+
 export const generatePrescriptionFn = createServerFn(
   'POST',
-  async (payload: { patientName: string; medication: string; quantity: number; refills: number; notes?: string }) => {
-    // Generate a secure 6-character code
+  async (payload: PrescriptionIn) => {
+    // Check if we should use mocks
+    const useMocks = process.env.VITE_USE_MOCKS !== 'false';
+    
+    if (!useMocks) {
+      // Integration with real FastAPI backend
+      const res = await fetch('http://localhost:8000/prescriptions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      if (!res.ok) throw new Error('Backend error: ' + await res.text())
+      const data = await res.json()
+      return data
+    }
+
+    // --- MOCK FALLBACK ---
     const code = 'RX-' + Math.random().toString(36).substring(2, 8).toUpperCase()
+    const firstItem = payload.items[0]
     
     const newPrescription: Prescription = {
       id: code,
-      patientName: payload.patientName,
-      medication: payload.medication,
-      quantity: payload.quantity,
-      refills: payload.refills,
-      notes: payload.notes,
+      patientName: `Patient #${payload.patient_id}`, // Mock string
+      medication: `Drug #${firstItem.drug_id} (${firstItem.dose})`,
+      quantity: firstItem.frequency_per_day * firstItem.days,
+      refills: 0,
       status: 'pending',
       createdAt: new Date().toISOString(),
     }
-    
     db.prescriptions.unshift(newPrescription)
-    return newPrescription
+    
+    // Return backend-like structure
+    return {
+      id: 999,
+      code: code,
+      expires_at: new Date().toISOString(),
+      prescriber: { id: payload.prescriber_id },
+      patient: { id: payload.patient_id, name: newPrescription.patientName },
+      items: [{
+        drug_name: newPrescription.medication,
+        dose: firstItem.dose,
+        frequency_per_day: firstItem.frequency_per_day,
+        days: firstItem.days,
+        quantity: newPrescription.quantity,
+        unit_price: 1500,
+        line_total: 1500 * newPrescription.quantity
+      }],
+      total: 1500 * newPrescription.quantity
+    }
   }
 )
 
 export const verifyPrescriptionFn = createServerFn(
   'POST',
-  async (payload: { code: string }) => {
-    const rx = db.prescriptions.find((p) => p.id === payload.code.toUpperCase())
-    if (!rx) {
-      throw new Error('Prescription not found')
+  async (payload: { code: string; patient_id: number; org_id: number }) => {
+    const useMocks = process.env.VITE_USE_MOCKS !== 'false';
+    
+    if (!useMocks) {
+      const url = `http://localhost:8000/dispense/verify?code=${payload.code}&patient_id=${payload.patient_id}&org_id=${payload.org_id}`
+      const res = await fetch(url)
+      const data = await res.json()
+      if (!data.valid) throw new Error(data.message || data.reason_code)
+      return data
     }
-    return rx
+
+    // --- MOCK FALLBACK ---
+    const rx = db.prescriptions.find((p) => p.id === payload.code.toUpperCase())
+    if (!rx) return { valid: false, reason_code: "NOT_FOUND" }
+    
+    return {
+      valid: true,
+      reason_code: null,
+      message: null,
+      prescription: {
+        id: 999,
+        code: rx.id,
+        expires_at: new Date().toISOString(),
+        prescriber: { id: 36, name: "Dr. Smith" },
+        patient: { id: payload.patient_id, name: rx.patientName },
+        items: [{
+          drug_name: rx.medication,
+          dose: "500mg",
+          frequency_per_day: 3,
+          days: 7,
+          quantity: rx.quantity,
+          unit_price: 1500,
+          line_total: rx.quantity * 1500
+        }],
+        total: rx.quantity * 1500
+      },
+      stock_ok: true,
+      stock_warnings: []
+    }
   }
 )
 
 export const dispensePrescriptionFn = createServerFn(
   'POST',
-  async (payload: { code: string }) => {
-    const rx = db.prescriptions.find((p) => p.id === payload.code.toUpperCase())
-    if (!rx) {
-      throw new Error('Prescription not found')
-    }
-    if (rx.status === 'dispensed') {
-      throw new Error('Prescription has already been dispensed')
-    }
+  async (payload: { code: string; patient_id: number; org_id: number; pharmacist_id: number }) => {
+    const useMocks = process.env.VITE_USE_MOCKS !== 'false';
     
-    // Update status
-    rx.status = 'dispensed'
+    if (!useMocks) {
+      const res = await fetch('http://localhost:8000/dispense', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      if (!res.ok) throw new Error('Backend error: ' + await res.text())
+      return await res.json()
+    }
 
-    // Attempt to reduce stock in inventory based on medication name
-    const inventoryItem = db.inventory.find(i => rx.medication.toLowerCase().includes(i.name.toLowerCase().split(' ')[0]))
+    // --- MOCK FALLBACK ---
+    const rx = db.prescriptions.find((p) => p.id === payload.code.toUpperCase())
+    if (!rx) throw new Error('Prescription not found')
+    if (rx.status === 'dispensed') throw new Error('Prescription has already been dispensed')
+    rx.status = 'dispensed'
     
-    let amount = 15000 // default mock amount
-    if (inventoryItem) {
-      inventoryItem.qtyOnHand = Math.max(0, inventoryItem.qtyOnHand - rx.quantity)
-      if (inventoryItem.qtyOnHand <= inventoryItem.reorderLevel) {
-        inventoryItem.status = 'Low Stock'
-      }
-      if (inventoryItem.qtyOnHand === 0) {
-        inventoryItem.status = 'Out of Stock'
-      }
-      
-      amount = inventoryItem.unitPrice * rx.quantity
-    }
-    
-    // Automatically create a settled transaction to represent the payout
+    // Fake a transaction
     db.transactions.unshift({
       id: 'TX-' + Math.floor(10000 + Math.random() * 90000),
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
       description: `Dispensed: ${rx.medication}`,
       counterparty: rx.patientName,
-      amount: amount, // Positive amount (revenue)
+      amount: 15000, 
       type: 'Pharmacy Sales',
       status: 'attested',
       evidenceChain: [
@@ -82,6 +152,13 @@ export const dispensePrescriptionFn = createServerFn(
       ]
     })
 
-    return rx
+    return {
+      dispense_id: 888,
+      total: 15000,
+      payment_reference: "PAY-123",
+      attestation_level: "ATTESTED",
+      stock_changes: [],
+      transaction_id: 9999
+    }
   }
 )

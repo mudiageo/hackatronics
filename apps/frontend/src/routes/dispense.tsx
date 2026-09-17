@@ -26,7 +26,7 @@ function DispenseRoute() {
     setLoading(true)
     
     try {
-      const data = await verifyPrescriptionFn({ code })
+      const data = await verifyPrescriptionFn({ code, patient_id: 421, org_id: 23 })
       setRxData(data)
       setStep('verify')
       toast.success('Prescription found and verified!')
@@ -40,7 +40,12 @@ function DispenseRoute() {
   const handleDispense = async () => {
     setLoading(true)
     try {
-      await dispensePrescriptionFn({ code })
+      await dispensePrescriptionFn({ 
+        code, 
+        patient_id: rxData.prescription.patient.id,
+        org_id: 23,
+        pharmacist_id: 38
+      })
       setStep('success')
       toast.success('Medication dispensed and inventory updated')
       await router.invalidate() // Refresh inventory/transactions
@@ -87,7 +92,7 @@ function DispenseRoute() {
           </Card>
         )}
 
-        {step === 'verify' && rxData && (
+        {step === 'verify' && rxData && rxData.prescription && (
           <Card className="border-border shadow-sm border-primary/20">
             <CardHeader className="border-b bg-muted/30">
               <div className="flex items-center gap-2 text-primary font-semibold">
@@ -99,28 +104,30 @@ function DispenseRoute() {
               <div className="grid grid-cols-2 gap-y-6">
                 <div>
                   <div className="text-sm text-muted-foreground">Patient Name</div>
-                  <div className="font-semibold text-lg">{rxData.patientName}</div>
+                  <div className="font-semibold text-lg">{rxData.prescription.patient.name}</div>
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground">Code</div>
-                  <div className="font-mono font-bold text-lg">{rxData.id}</div>
+                  <div className="font-mono font-bold text-lg">{rxData.prescription.code}</div>
                 </div>
                 <div className="col-span-2">
-                  <div className="text-sm text-muted-foreground">Medication to Dispense</div>
-                  <div className="font-semibold text-xl text-primary bg-primary/10 p-4 rounded-lg mt-2 flex items-center justify-between">
-                    <span>{rxData.medication}</span>
-                    <span className="bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full">
-                      Qty: {rxData.quantity}
-                    </span>
-                  </div>
+                  <div className="text-sm text-muted-foreground">Medications to Dispense</div>
+                  {rxData.prescription.items.map((item: any, idx: number) => (
+                    <div key={idx} className="font-semibold text-xl text-primary bg-primary/10 p-4 rounded-lg mt-2 flex items-center justify-between">
+                      <span>{item.drug_name} <span className="text-sm font-normal text-muted-foreground ml-2">({item.dose}, {item.frequency_per_day}x/day for {item.days} days)</span></span>
+                      <span className="bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full">
+                        Qty: {item.quantity}
+                      </span>
+                    </div>
+                  ))}
                 </div>
                 <div className="col-span-2">
-                  <div className="text-sm text-muted-foreground">Clinical Notes</div>
-                  <div className="italic text-foreground mt-1">{rxData.notes || 'None'}</div>
-                </div>
-                <div className="col-span-2">
-                  <div className="text-sm text-muted-foreground">Status</div>
-                  <div className="font-semibold text-foreground mt-1 uppercase">{rxData.status}</div>
+                  <div className="text-sm text-muted-foreground">Stock Status</div>
+                  {rxData.stock_ok ? (
+                     <div className="font-semibold text-green-600 mt-1">Available in Inventory</div>
+                  ) : (
+                     <div className="font-semibold text-red-600 mt-1">Low Stock Warning: {rxData.stock_warnings.join(', ')}</div>
+                  )}
                 </div>
               </div>
 
@@ -131,7 +138,7 @@ function DispenseRoute() {
                 <Button 
                   className="flex-1 gap-2" 
                   onClick={handleDispense} 
-                  disabled={loading || rxData.status === 'dispensed'}
+                  disabled={loading}
                 >
                   {loading ? 'Dispensing...' : 'Dispense Medication'} <ArrowRight className="w-4 h-4" />
                 </Button>

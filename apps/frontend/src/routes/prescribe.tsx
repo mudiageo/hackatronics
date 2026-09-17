@@ -26,20 +26,24 @@ function PrescribeRoute() {
     
     try {
       const rx = await generatePrescriptionFn({
-        patientName: formData.get('patientName') as string,
-        medication: formData.get('medication') as string,
-        quantity: parseInt(formData.get('quantity') as string, 10),
-        refills: parseInt(formData.get('refills') as string, 10) || 0,
-        notes: (formData.get('notes') as string) || undefined,
+        patient_id: parseInt(formData.get('patientId') as string, 10),
+        prescriber_id: 36, // Hardcoded doctor ID
+        items: [
+          {
+            drug_id: parseInt(formData.get('drugId') as string, 10),
+            dose: formData.get('dose') as string,
+            frequency_per_day: parseInt(formData.get('frequency') as string, 10),
+            days: parseInt(formData.get('days') as string, 10),
+          }
+        ]
       })
       
-      setGeneratedCode(rx.id)
+      setGeneratedCode(rx.code)
       toast.success('Prescription generated successfully')
       
-      // Optionally invalidate router to refresh other data if needed
       await router.invalidate()
     } catch (error: any) {
-      toast.error('Failed to generate prescription: ' + error.message)
+      toast.error('Failed to generate prescription')
     } finally {
       setLoading(false)
     }
@@ -70,30 +74,31 @@ function PrescribeRoute() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="patientName">Patient Name</Label>
-                  <Input id="patientName" name="patientName" placeholder="John Doe" required />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="medication">Medication</Label>
-                  <Input id="medication" name="medication" placeholder="Amoxicillin 500mg" required />
-                </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="quantity">Quantity</Label>
-                    <Input id="quantity" name="quantity" type="number" placeholder="30" required />
+                    <Label htmlFor="patientId">Patient ID</Label>
+                    <Input id="patientId" name="patientId" type="number" defaultValue="421" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="refills">Refills</Label>
-                    <Input id="refills" name="refills" type="number" defaultValue="0" min="0" required />
+                    <Label htmlFor="drugId">Drug ID</Label>
+                    <Input id="drugId" name="drugId" type="number" defaultValue="57" required />
                   </div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Clinical Notes (Optional)</Label>
-                  <Input id="notes" name="notes" placeholder="Take after meals" />
+                
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="dose">Dose</Label>
+                    <Input id="dose" name="dose" placeholder="500mg" defaultValue="500mg" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="frequency">Freq / Day</Label>
+                    <Input id="frequency" name="frequency" type="number" defaultValue="3" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="days">Days</Label>
+                    <Input id="days" name="days" type="number" defaultValue="7" required />
+                  </div>
                 </div>
 
                 <Button type="submit" className="w-full gap-2" disabled={loading}>
