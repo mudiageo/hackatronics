@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/inventory')({
   component: Inventory,
@@ -6,14 +8,16 @@ export const Route = createFileRoute('/inventory')({
 
 function Inventory() {
   return (
-    <div className="p-6">
+    <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6 max-w-7xl mx-auto bg-background min-h-screen w-full">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Inventory</h1>
-        <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90">
-          Add Item
-        </button>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">Inventory</h2>
+          <p className="text-muted-foreground text-sm">Track stock so it can feed into transactions and financial intelligence.</p>
+        </div>
+        <Button className="flex gap-2 items-center">
+          <Plus className="w-4 h-4" /> Add Item
+        </Button>
       </div>
-      <p className="text-muted-foreground mb-4">Track stock so it can feed into transactions and financial intelligence.</p>
       
       <div className="border rounded-lg overflow-hidden">
         <table className="w-full">

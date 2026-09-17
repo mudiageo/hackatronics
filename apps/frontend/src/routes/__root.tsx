@@ -43,6 +43,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 import { ThemeProvider } from "../components/theme-provider";
+import { RoleProvider } from "../components/RoleProvider";
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -53,15 +54,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased text-foreground bg-background selection:bg-accent/20">
         <ThemeProvider defaultTheme="system" storageKey="theme">
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-              <Topbar />
-              <main className="flex-1 flex flex-col">
-                {children}
-              </main>
+          <RoleProvider>
+            <div className="flex h-screen overflow-hidden">
+              <Sidebar />
+              <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+                <Topbar />
+                <main className="flex-1 flex flex-col">
+                  {children}
+                </main>
+              </div>
             </div>
-          </div>
+          </RoleProvider>
         </ThemeProvider>
         <TanStackDevtools
           config={{

@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Download } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/passport')({
   component: Passport,
@@ -6,14 +8,16 @@ export const Route = createFileRoute('/passport')({
 
 function Passport() {
   return (
-    <div className="p-6">
+    <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6 max-w-7xl mx-auto bg-background min-h-screen">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Financial Passport</h1>
-        <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 flex gap-2 items-center">
-          <span>📤</span> Export PDF
-        </button>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">Financial Passport</h2>
+          <p className="text-muted-foreground text-sm">An exportable, presentable summary of the business's verified financial history.</p>
+        </div>
+        <Button className="flex gap-2 items-center">
+          <Download className="w-4 h-4" /> Export PDF
+        </Button>
       </div>
-      <p className="text-muted-foreground mb-6">An exportable, presentable summary of the business's verified financial history.</p>
       
       <div className="border rounded-lg p-6 bg-card max-w-3xl mx-auto shadow-sm">
         <div className="text-center mb-8 border-b pb-6">
