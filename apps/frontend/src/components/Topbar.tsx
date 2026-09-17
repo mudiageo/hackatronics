@@ -1,10 +1,12 @@
 import { Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "./mode-toggle";
+import { MobileNav } from "./MobileNav";
 
 export default function Topbar() {
   return (
-    <header className="h-20 px-8 flex items-center justify-between border-b border-border bg-card sticky top-0 z-40">
+    <header className="h-20 px-4 md:px-8 flex items-center justify-between border-b border-border bg-card sticky top-0 z-40 gap-4">
+      <MobileNav />
       <div className="flex-1 max-w-xl">
         <div className="relative flex items-center">
           <Search className="w-5 h-5 text-muted-foreground absolute left-3" />

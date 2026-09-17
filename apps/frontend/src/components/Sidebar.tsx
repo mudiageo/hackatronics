@@ -3,7 +3,7 @@ import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText } from "lucide
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 border-r border-border bg-card flex flex-col h-screen sticky top-0 shrink-0">
+    <aside className="hidden lg:flex w-64 border-r border-border bg-card flex-col h-screen sticky top-0 shrink-0">
       <div className="p-6 flex items-center gap-3">
         <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
           <span className="text-primary-foreground font-bold text-xl leading-none">F</span>

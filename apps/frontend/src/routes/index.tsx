@@ -1,62 +1,33 @@
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Activity, Banknote, TrendingUp, TrendingDown, ArrowRight } from 'lucide-react'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { TrendingUp, TrendingDown, Activity, Banknote, ArrowRight, CheckCircle2, Circle, CheckCircle } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { getDashboardData } from "../services/dashboard.service"
 
 export const Route = createFileRoute('/')({
   component: Dashboard,
+  loader: async () => {
+    return await getDashboardData()
+  }
 })
-
-// MOCK DATA for the Dashboard
-const metricsSummary = {
-  revenue: 24500,
-  expenses: 12050,
-  profit: 12450,
-  cashPosition: 45000,
-}
-
-// Coverage Breakdown
-const coverage = {
-  recorded: 20, // grey
-  settled: 30,  // blue
-  attested: 50  // green
-}
-
-const recentActivity = [
-  { id: 'tx-1', date: '2026-09-17', desc: 'Pharmacy B Restock', amount: 500, type: 'Sale', status: 'attested' },
-  { id: 'tx-2', date: '2026-09-16', desc: 'Supplier Invoice', amount: -120, type: 'Expense', status: 'recorded' },
-  { id: 'tx-3', date: '2026-09-15', desc: 'Patient Copay', amount: 1200, type: 'Sale', status: 'settled' },
-  { id: 'tx-4', date: '2026-09-14', desc: 'Equipment Purchase', amount: -450, type: 'Purchase', status: 'attested' },
-]
 
 function getStatusBadge(status: string) {
   switch (status) {
     case 'attested':
-      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-green-200">Attested</Badge>
+      return <Badge className="bg-green-100 text-green-700 hover:bg-green-100/80 border-0 flex items-center gap-1 w-fit ml-auto"><CheckCircle2 className="w-3 h-3" /> Attested</Badge>
     case 'settled':
-      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200">Settled</Badge>
-    case 'recorded':
+      return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100/80 border-0 flex items-center gap-1 w-fit ml-auto"><CheckCircle className="w-3 h-3" /> Settled</Badge>
     default:
-      return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100 border-gray-200" variant="outline">Self-reported</Badge>
+      return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100/80 border-0 flex items-center gap-1 w-fit ml-auto"><Circle className="w-3 h-3" /> Recorded</Badge>
   }
 }
 
 function Dashboard() {
+  const { metricsSummary, coverage, recentActivity } = Route.useLoaderData()
+
   return (
-    <div className="flex-1 space-y-6 p-8 pt-6 max-w-7xl mx-auto bg-background min-h-screen">
+    <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6 max-w-7xl mx-auto bg-background min-h-screen">
       <div className="flex items-center justify-between space-y-2 mb-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">Business Health</h2>
