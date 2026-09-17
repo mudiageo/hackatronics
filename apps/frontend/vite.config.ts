@@ -11,6 +11,7 @@ import { lazyPlugins } from "vite-plus";
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
+  build: { chunkSizeWarningLimit: 10000 },
   plugins: lazyPlugins(() => [
     devtools(),
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
