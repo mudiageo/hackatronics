@@ -34,54 +34,54 @@ function Dashboard() {
         description="Overview of your financial passport and recent transactions." 
       />
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
         {/* Revenue Card */}
-        <Card className="rounded-2xl shadow-sm border-border">
+        <Card className="rounded-2xl shadow-sm border-border overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Revenue</CardTitle>
-            <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center shrink-0">
               <TrendingUp className="h-4 w-4 text-green-600" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">${metricsSummary.revenue.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`$${metricsSummary.revenue.toLocaleString()}`}>${metricsSummary.revenue.toLocaleString()}</div>
           </CardContent>
         </Card>
 
         {/* Expenses Card */}
-        <Card className="rounded-2xl shadow-sm border-border">
+        <Card className="rounded-2xl shadow-sm border-border overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Expenses</CardTitle>
-            <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center shrink-0">
               <TrendingDown className="h-4 w-4 text-red-600" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">${metricsSummary.expenses.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`$${metricsSummary.expenses.toLocaleString()}`}>${metricsSummary.expenses.toLocaleString()}</div>
           </CardContent>
         </Card>
 
         {/* Profit Card */}
-        <Card className="rounded-2xl shadow-sm border-border">
+        <Card className="rounded-2xl shadow-sm border-border overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Profit</CardTitle>
-            <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
               <Activity className="h-4 w-4 text-accent" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">${metricsSummary.profit.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`$${metricsSummary.profit.toLocaleString()}`}>${metricsSummary.profit.toLocaleString()}</div>
           </CardContent>
         </Card>
 
         {/* Cash Position Hero Card (Dark Navy) */}
-        <Card className="rounded-2xl shadow-sm bg-primary text-primary-foreground border-transparent">
+        <Card className="rounded-2xl shadow-sm bg-primary text-primary-foreground border-transparent overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-primary-foreground/80">Cash Position</CardTitle>
-            <Banknote className="h-4 w-4 text-primary-foreground/80" />
+            <Banknote className="h-4 w-4 text-primary-foreground/80 shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">${metricsSummary.cashPosition.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold truncate" title={`$${metricsSummary.cashPosition.toLocaleString()}`}>${metricsSummary.cashPosition.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>
