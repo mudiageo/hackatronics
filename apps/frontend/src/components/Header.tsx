@@ -17,42 +17,20 @@ export default function Header() {
 
         <div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 text-sm font-semibold sm:order-none sm:w-auto sm:flex-nowrap sm:pb-0">
           <Link to="/" className="nav-link" activeProps={{ className: "nav-link is-active" }}>
-            Home
+            Dashboard
           </Link>
-          <Link to="/about" className="nav-link" activeProps={{ className: "nav-link is-active" }}>
-            About
+          <Link to="/transactions" className="nav-link" activeProps={{ className: "nav-link is-active" }}>
+            Transactions
           </Link>
-          <a
-            href="https://tanstack.com/start/latest/docs/framework/react/overview"
-            className="nav-link"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Docs
-          </a>
-          <details className="relative w-full sm:w-auto">
-            <summary className="nav-link list-none cursor-pointer">Demos</summary>
-            <div className="mt-2 min-w-56 rounded-xl border border-[var(--line)] bg-[var(--header-bg)] p-2 shadow-lg sm:absolute sm:right-0">
-              <a
-                href="/demo/db-chat"
-                className="block rounded-lg px-3 py-2 text-sm text-[var(--sea-ink-soft)] no-underline transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-              >
-                DB Chat
-              </a>
-              <a
-                href="/demo/store"
-                className="block rounded-lg px-3 py-2 text-sm text-[var(--sea-ink-soft)] no-underline transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-              >
-                Store
-              </a>
-              <a
-                href="/demo/tanstack-query"
-                className="block rounded-lg px-3 py-2 text-sm text-[var(--sea-ink-soft)] no-underline transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-              >
-                TanStack Query
-              </a>
-            </div>
-          </details>
+          <Link to="/inventory" className="nav-link" activeProps={{ className: "nav-link is-active" }}>
+            Inventory
+          </Link>
+          <Link to="/verified-activity" className="nav-link" activeProps={{ className: "nav-link is-active" }}>
+            Verified Activity
+          </Link>
+          <Link to="/passport" className="nav-link" activeProps={{ className: "nav-link is-active" }}>
+            Passport
+          </Link>
         </div>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
