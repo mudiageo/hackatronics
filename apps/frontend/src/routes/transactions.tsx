@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { useState } from 'react'
+import { PageHeader } from '../components/PageHeader'
 
 export const Route = createFileRoute('/transactions')({
   component: Transactions,
@@ -29,15 +30,15 @@ function Transactions() {
 
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">Transactions</h2>
-          <p className="text-muted-foreground text-sm">The system of record for everything that happened financially.</p>
-        </div>
-        <Button className="flex gap-2 items-center">
-          <Plus className="w-4 h-4" /> Add Transaction
-        </Button>
-      </div>
+      <PageHeader 
+        title="Transactions" 
+        description="The system of record for everything that happened financially." 
+        action={
+          <Button className="flex gap-2 items-center">
+            <Plus className="w-4 h-4" /> Add Transaction
+          </Button>
+        }
+      />
       
       <div className="border rounded-lg overflow-hidden bg-card shadow-sm">
         <Table>

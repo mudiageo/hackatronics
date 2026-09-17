@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { TrendingUp, TrendingDown, Activity, Banknote, ArrowRight, CheckCircle2, Circle, CheckCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { getDashboardData } from "../services/dashboard.service"
+import { PageHeader } from "../components/PageHeader"
 
 export const Route = createFileRoute('/')({
   component: Dashboard,
@@ -28,12 +29,10 @@ function Dashboard() {
 
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
-      <div className="flex items-center justify-between space-y-2 mb-6">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">Business Health</h2>
-          <p className="text-muted-foreground text-sm">Overview of your financial passport and recent transactions.</p>
-        </div>
-      </div>
+      <PageHeader 
+        title="Business Health" 
+        description="Overview of your financial passport and recent transactions." 
+      />
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {/* Revenue Card */}

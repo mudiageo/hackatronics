@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { FileText } from 'lucide-react'
+import { PageHeader } from '../components/PageHeader'
 
 export const Route = createFileRoute('/verified-activity')({
   component: VerifiedActivity,
@@ -8,10 +9,10 @@ export const Route = createFileRoute('/verified-activity')({
 function VerifiedActivity() {
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">Verified Activity</h2>
-        <p className="text-muted-foreground text-sm">A trust-focused view — shows only activity that has evidence attached.</p>
-      </div>
+      <PageHeader 
+        title="Verified Activity" 
+        description="A trust-focused view — shows only activity that has evidence attached." 
+      />
       
       <div className="mb-6 p-4 border rounded-lg bg-blue-50/50 dark:bg-blue-950/20">
         <div className="flex justify-between items-center mb-2">
