@@ -56,19 +56,20 @@ function VerifiedActivity() {
               </div>
 
               {/* Progress Trail */}
-              <div className="relative">
-                <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted z-0"></div>
-                <div 
-                  className="absolute top-4 left-4 h-0.5 bg-accent z-0 transition-all duration-500"
-                  style={{ 
-                    width: `${
-                      (activity.steps.filter(s => s.status === 'completed').length / (activity.steps.length - 1)) * 100
-                    }%` 
-                  }}
-                ></div>
-                
-                <div className="relative z-10 flex justify-between">
-                  {activity.steps.map((step, idx) => (
+              <div className="relative overflow-x-auto pb-4 -mx-6 px-6 sm:mx-0 sm:px-0 scrollbar-hide">
+                <div className="min-w-[500px] relative">
+                  <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted z-0"></div>
+                  <div 
+                    className="absolute top-4 left-4 h-0.5 bg-accent z-0 transition-all duration-500"
+                    style={{ 
+                      width: `${
+                        (activity.steps.filter(s => s.status === 'completed').length / (activity.steps.length - 1)) * 100
+                      }%` 
+                    }}
+                  ></div>
+                  
+                  <div className="relative z-10 flex justify-between">
+                    {activity.steps.map((step, idx) => (
                     <div key={idx} className="flex flex-col items-center gap-2 relative">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors duration-300 z-10 ${
                         step.status === 'completed' ? 'bg-accent border-accent text-accent-foreground' : 
@@ -93,6 +94,7 @@ function VerifiedActivity() {
                       </div>
                     </div>
                   ))}
+                </div>
                 </div>
               </div>
             </CardContent>
