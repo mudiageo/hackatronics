@@ -11,10 +11,10 @@ export default function Sidebar() {
 
   const getBusinessName = (r: string) => {
     switch (r) {
-      case 'Clinic': return 'City Clinic';
-      case 'Pharmacy': return 'HealthPlus';
-      case 'Owner': return 'HealthPlus Admin';
-      case 'Bank': return 'First Bank';
+      case 'Clinic': return 'Grace Medical Centre';
+      case 'Pharmacy': return 'Wellcare Pharmacy';
+      case 'Owner': return 'Wellcare Pharmacy Admin';
+      case 'Bank': return 'Wema Bank';
       default: return 'Business';
     }
   };

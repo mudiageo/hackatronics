@@ -79,7 +79,7 @@ export const getPassportData = createServerFn({ method: 'GET' }).handler(async (
     const trustScore = 88
 
     return {
-      businessName: 'HealthPlus Pharmacy',
+      businessName: 'Wellcare Pharmacy',
       industry: 'Retail Pharmacy',
       coveragePeriod: 'Jan 2026 - Present',
       trustScore,
