@@ -2,19 +2,29 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '../components/PageHeader'
+import { toast } from 'sonner'
 
 export const Route = createFileRoute('/passport')({
   component: Passport,
 })
 
 function Passport() {
+  const handleExport = () => {
+    toast.info('Generating PDF...', {
+      description: 'Your financial passport is being prepared for print/export.'
+    });
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  }
+
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
       <PageHeader 
         title="Financial Passport" 
         description="An exportable, presentable summary of the business's verified financial history." 
         action={
-          <Button className="flex gap-2 items-center">
+          <Button className="flex gap-2 items-center" onClick={handleExport}>
             <Download className="w-4 h-4" /> Export PDF
           </Button>
         }

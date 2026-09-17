@@ -2,11 +2,16 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Plus, Package, ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '../components/PageHeader'
-import { getInventory, InventoryItem } from '../services/inventory.service'
+import { getInventory } from '../services/inventory.service'
+import type { InventoryItem } from '../services/inventory.service'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export const Route = createFileRoute('/inventory')({
   component: Inventory,
@@ -27,8 +32,34 @@ function getStatusBadge(status: string) {
 }
 
 function Inventory() {
-  const inventory = Route.useLoaderData()
+  const initialInventory = Route.useLoaderData()
+  const [inventory, setInventory] = useState<InventoryItem[]>(initialInventory)
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+
+  const handleAddItem = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    
+    const qty = Number(formData.get('qtyOnHand'))
+    const reorder = Number(formData.get('reorderLevel'))
+    
+    const newItem: InventoryItem = {
+      id: `INV-${Math.floor(Math.random() * 1000) + 100}`,
+      name: formData.get('name') as string,
+      sku: formData.get('sku') as string,
+      qtyOnHand: qty,
+      reorderLevel: reorder,
+      unitPrice: Number(formData.get('unitPrice')),
+      costPrice: Number(formData.get('costPrice')),
+      status: qty === 0 ? 'Out of Stock' : (qty <= reorder ? 'Low Stock' : 'In Stock'),
+      movements: []
+    }
+
+    setInventory([newItem, ...inventory])
+    setIsAddModalOpen(false)
+    toast.success('Inventory item added successfully')
+  }
 
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
@@ -36,9 +67,54 @@ function Inventory() {
         title="Inventory" 
         description="Track stock so it can feed into transactions and financial intelligence." 
         action={
-          <Button className="flex gap-2 items-center">
-            <Plus className="w-4 h-4" /> Add Item
-          </Button>
+          <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+            <DialogTrigger asChild>
+              <Button className="flex gap-2 items-center">
+                <Plus className="w-4 h-4" /> Add Item
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add Inventory Item</DialogTitle>
+                <DialogDescription>
+                  Register a new product to track in your inventory.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleAddItem} className="space-y-4 pt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Item Name</Label>
+                  <Input id="name" name="name" placeholder="e.g. Paracetamol 500mg" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sku">SKU / Code</Label>
+                  <Input id="sku" name="sku" placeholder="e.g. MED-PAR-500" required />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="qtyOnHand">Quantity on Hand</Label>
+                    <Input id="qtyOnHand" name="qtyOnHand" type="number" defaultValue={0} min="0" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reorderLevel">Reorder Level</Label>
+                    <Input id="reorderLevel" name="reorderLevel" type="number" defaultValue={10} min="0" required />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="unitPrice">Unit Price ($)</Label>
+                    <Input id="unitPrice" name="unitPrice" type="number" step="0.01" placeholder="10.00" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="costPrice">Cost Price ($)</Label>
+                    <Input id="costPrice" name="costPrice" type="number" step="0.01" placeholder="5.00" required />
+                  </div>
+                </div>
+                <DialogFooter className="pt-4">
+                  <Button type="submit">Save Item</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         }
       />
       

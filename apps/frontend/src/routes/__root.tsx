@@ -44,6 +44,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 import { ThemeProvider } from "../components/theme-provider";
 import { RoleProvider } from "../components/RoleProvider";
+import { Toaster } from "sonner";
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -66,6 +67,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             </div>
           </RoleProvider>
         </ThemeProvider>
+        <Toaster richColors position="top-center" />
         <TanStackDevtools
           config={{
             position: "bottom-right",

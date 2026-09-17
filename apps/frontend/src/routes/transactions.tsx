@@ -6,8 +6,12 @@ import type { Transaction, EvidenceStep } from '../services/transactions.service
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { useState } from 'react'
 import { PageHeader } from '../components/PageHeader'
+import { toast } from 'sonner'
 
 export const Route = createFileRoute('/transactions')({
   component: Transactions,
@@ -26,8 +30,31 @@ function getStatusBadge(status: string) {
 }
 
 function Transactions() {
-  const transactions = Route.useLoaderData()
+  const initialTransactions = Route.useLoaderData()
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions)
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+
+  const handleAddTransaction = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    
+    const newTx: Transaction = {
+      id: `TX-${Math.floor(Math.random() * 10000) + 10000}`,
+      date: formData.get('date') as string || new Date().toISOString().split('T')[0],
+      description: formData.get('description') as string,
+      counterparty: formData.get('counterparty') as string,
+      amount: Number(formData.get('amount')),
+      type: formData.get('type') as string,
+      status: 'recorded'
+    }
+
+    setTransactions([newTx, ...transactions])
+    setIsAddModalOpen(false)
+    toast.success('Transaction recorded successfully', {
+      description: 'This transaction is self-reported and pending verification.'
+    })
+  }
 
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
@@ -35,9 +62,48 @@ function Transactions() {
         title="Transactions" 
         description="The system of record for everything that happened financially." 
         action={
-          <Button className="flex gap-2 items-center">
-            <Plus className="w-4 h-4" /> Add Transaction
-          </Button>
+          <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+            <DialogTrigger asChild>
+              <Button className="flex gap-2 items-center">
+                <Plus className="w-4 h-4" /> Add Transaction
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add Transaction</DialogTitle>
+                <DialogDescription>
+                  Record a new financial transaction manually.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleAddTransaction} className="space-y-4 pt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Input id="description" name="description" placeholder="e.g. Office Supplies" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="counterparty">Counterparty</Label>
+                  <Input id="counterparty" name="counterparty" placeholder="e.g. Stationery Hub" required />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="amount">Amount ($)</Label>
+                    <Input id="amount" name="amount" type="number" step="0.01" placeholder="-150.00" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="type">Type</Label>
+                    <Input id="type" name="type" placeholder="e.g. Expense" required />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="date">Date</Label>
+                  <Input id="date" name="date" type="date" required defaultValue={new Date().toISOString().split('T')[0]} />
+                </div>
+                <DialogFooter className="pt-4">
+                  <Button type="submit">Record Transaction</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         }
       />
       
