@@ -15,6 +15,34 @@ export interface Prescription {
 class InMemoryDB {
   public transactions: Transaction[] = [
     {
+      id: 'TX-10026',
+      date: 'Sep 17, 2026 14:30',
+      description: 'Term 1 Tuition Bulk Payment',
+      counterparty: 'Parents Association',
+      amount: 1250000,
+      type: 'Tuition Fees',
+      status: 'attested',
+      evidenceChain: [
+        { id: 'e1', step: 'Invoiced', timestamp: 'Sep 01, 2026 09:00', actor: 'Admin', completed: true },
+        { id: 'e2', step: 'Paid', timestamp: 'Sep 15, 2026 10:15', actor: 'Payment Gateway', completed: true },
+        { id: 'e5', step: 'Settled', timestamp: 'Sep 17, 2026 14:30', actor: 'Bank Gateway', completed: true },
+      ]
+    },
+    {
+      id: 'TX-10025',
+      date: 'Sep 16, 2026 09:15',
+      description: 'Alumni Association Grant',
+      counterparty: 'Alumni Trust',
+      amount: 500000,
+      type: 'Donations',
+      status: 'settled',
+      evidenceChain: [
+        { id: 'e1', step: 'Grant Approved', timestamp: 'Sep 10, 2026 10:00', actor: 'Trust Board', completed: true },
+        { id: 'e2', step: 'Transferred', timestamp: 'Sep 15, 2026 11:30', actor: 'Trust Bank', completed: true },
+        { id: 'e5', step: 'Settled', timestamp: 'Sep 16, 2026 09:15', actor: 'Bank Gateway', completed: true },
+      ]
+    },
+    {
       id: 'TX-10024',
       date: 'Sep 17, 2026 14:30',
       description: 'Malaria Treatment Bulk Purchase',
@@ -46,7 +74,35 @@ class InMemoryDB {
     },
     { id: 'TX-10022', date: 'Sep 15, 2026 16:45', description: 'Office Supplies', counterparty: 'Stationery Hub', amount: -15000, type: 'Expense', status: 'recorded' },
     { id: 'TX-10021', date: 'Sep 14, 2026 11:20', description: 'Equipment Maintenance', counterparty: 'MedTech Repairs', amount: -85000, type: 'Maintenance', status: 'recorded' },
-    { id: 'TX-10020', date: 'Sep 12, 2026 08:00', description: 'Monthly Software Subscription', counterparty: 'HealthSaaS Inc', amount: -25000, type: 'Software', status: 'settled' }
+    { id: 'TX-10020', date: 'Sep 12, 2026 08:00', description: 'Monthly Software Subscription', counterparty: 'HealthSaaS Inc', amount: -25000, type: 'Software', status: 'settled' },
+    {
+      id: 'TX-10019',
+      date: 'Aug 28, 2026 14:00',
+      description: 'Annual Facility Rent',
+      counterparty: 'Property Management Inc',
+      amount: -1500000,
+      type: 'Rent',
+      status: 'attested',
+      evidenceChain: [
+        { id: 'e1', step: 'Invoice Received', timestamp: 'Aug 15, 2026 09:00', actor: 'Admin', completed: true },
+        { id: 'e2', step: 'Approved', timestamp: 'Aug 20, 2026 10:15', actor: 'Director', completed: true },
+        { id: 'e5', step: 'Settled', timestamp: 'Aug 28, 2026 14:00', actor: 'Bank Gateway', completed: true },
+      ]
+    },
+    {
+      id: 'TX-10018',
+      date: 'Aug 30, 2026 09:00',
+      description: 'Staff Salaries',
+      counterparty: 'Multiple',
+      amount: -240000,
+      type: 'Payroll',
+      status: 'settled',
+      evidenceChain: [
+        { id: 'e1', step: 'Payroll Run', timestamp: 'Aug 28, 2026 10:00', actor: 'HR System', completed: true },
+        { id: 'e2', step: 'Approved', timestamp: 'Aug 29, 2026 11:30', actor: 'Director', completed: true },
+        { id: 'e5', step: 'Settled', timestamp: 'Aug 30, 2026 09:00', actor: 'Bank Gateway', completed: true },
+      ]
+    }
   ]
 
   public inventory: InventoryItem[] = [
@@ -108,7 +164,18 @@ class InMemoryDB {
     }
   ]
 
-  public prescriptions: Prescription[] = []
+  public prescriptions: Prescription[] = [
+    {
+      id: 'RX-DEMO1',
+      patientName: 'Jane Smith',
+      medication: 'Amoxicillin 500mg',
+      quantity: 1,
+      refills: 0,
+      notes: 'Take after meals',
+      status: 'pending',
+      createdAt: new Date().toISOString()
+    }
+  ]
 }
 
 declare global {
