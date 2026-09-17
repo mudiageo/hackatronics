@@ -144,7 +144,7 @@ function Transactions() {
       </div>
 
       <Sheet open={!!selectedTx} onOpenChange={(open) => !open && setSelectedTx(null)}>
-        <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto border-l-border bg-card">
+        <SheetContent className="w-full sm:w-[540px] overflow-y-auto border-l-border bg-card">
           {selectedTx && (
             <>
               <SheetHeader className="mb-6">

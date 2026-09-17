@@ -159,7 +159,7 @@ function Inventory() {
       </div>
 
       <Sheet open={!!selectedItem} onOpenChange={(open) => !open && setSelectedItem(null)}>
-        <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto border-l-border bg-card">
+        <SheetContent className="w-full sm:w-[540px] overflow-y-auto border-l-border bg-card">
           {selectedItem && (
             <>
               <SheetHeader className="mb-6">
