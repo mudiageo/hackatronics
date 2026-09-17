@@ -103,3 +103,13 @@
     margin: 0;
   }
 }
+
+/* Hide toast notifications and UI elements during printing */
+@media print {
+  [data-sonner-toaster], 
+  header, 
+  nav, 
+  aside {
+    display: none !important;
+  }
+}
