@@ -2,7 +2,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { TrendingUp, TrendingDown, Activity, Banknote, ArrowRight, CheckCircle2, Circle, CheckCircle } from "lucide-react"
+import { TrendingUp, TrendingDown, Activity, Banknote, ArrowRight, CheckCircle2, Circle, CheckCircle, ShieldCheck } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { getDashboardData } from "../services/dashboard.service"
 import { PageHeader } from "../components/PageHeader"
@@ -33,16 +33,16 @@ function Dashboard() {
   const coverageData = [
     {
       name: "Coverage",
+      recorded: 100, // Background
+      settled: coverage.settled,
       attested: coverage.attested,
-      settledOnly: coverage.settled - coverage.attested,
-      recordedOnly: 100 - coverage.settled,
     }
   ]
 
   const coverageConfig = {
-    attested: { label: "Attested", color: "#16a34a" },
-    settledOnly: { label: "Settled", color: "hsl(var(--accent))" },
-    recordedOnly: { label: "Recorded", color: "#d1d5db" },
+    recorded: { label: "Recorded", color: "#3b82f6" },
+    settled: { label: "Settled", color: "#10b981" },
+    attested: { label: "Attested", color: "#a3e635" },
   }
 
   return (
@@ -112,24 +112,29 @@ function Dashboard() {
               <CardTitle className="text-lg font-semibold text-foreground">Financial Coverage</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Nested Horizontal Bar */}
-              <div className="h-8 w-full rounded-full overflow-hidden">
-                <CoverageChart coverageData={coverageData} coverageConfig={coverageConfig} />
-              </div>
-              <div className="flex flex-wrap gap-2 text-sm font-medium text-muted-foreground items-center">
-                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-[#d1d5db]"></div> 100% Recorded</div>
-                <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
-                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-accent"></div> {coverage.settled}% Settled</div>
-                <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
-                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-green-600"></div> {coverage.attested}% Attested</div>
+              {/* Nested Horizontal Bar using Custom Recharts Shape */}
+              <div className="flex items-center gap-4">
+                <div className="h-10 flex-1 relative">
+                  <CoverageChart coverageData={coverageData} coverageConfig={coverageConfig} />
+                </div>
+                <div className="text-sm font-bold">100%</div>
               </div>
               
-              {/* Health Explanation */}
-              <div className="p-4 bg-muted/50 rounded-lg text-sm text-foreground leading-relaxed">
-                Your business health is <strong>strong</strong>. {coverage.attested}% of your total recorded financial volume has been fully attested by verified evidence, giving you a high trust score with lending partners. 
-                <a href="/verified-activity" className="text-accent font-medium flex items-center gap-1 mt-2 hover:underline">
-                  View evidence trail <ArrowRight className="w-4 h-4" />
-                </a>
+              <div className="flex flex-wrap gap-6 text-sm font-medium text-foreground items-center">
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#3b82f6]"></div> 100% Recorded</div>
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#10b981]"></div> {coverage.settled}% Settled</div>
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#a3e635]"></div> {coverage.attested}% Attested</div>
+              </div>
+              
+              {/* Health Explanation Alert */}
+              <div className="flex items-start gap-4 p-4 bg-muted/30 rounded-xl border border-muted/50 text-sm text-foreground leading-relaxed mt-2">
+                <div className="w-8 h-8 rounded-full bg-blue-100/50 flex items-center justify-center shrink-0 mt-0.5">
+                  <ShieldCheck className="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  {coverage.attested}% of your recorded financial volume is fully attested, 
+                  with {coverage.settled}% supported by settlement evidence.
+                </div>
               </div>
             </CardContent>
           </Card>
