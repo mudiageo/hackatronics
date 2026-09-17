@@ -120,6 +120,7 @@ function Transactions() {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         }
       />
       
