@@ -56,7 +56,7 @@ function getStatusBadge(status: string) {
 
 function Dashboard() {
   return (
-    <div className="flex-1 space-y-6 p-8 pt-6 max-w-7xl mx-auto bg-[#F7F8FC] min-h-screen">
+    <div className="flex-1 space-y-6 p-8 pt-6 max-w-7xl mx-auto bg-white min-h-screen">
       <div className="flex items-center justify-between space-y-2 mb-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-[#111827]">Business Health</h2>
