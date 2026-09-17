@@ -7,7 +7,7 @@ from app.models.prescription import Prescription
 from app.models.org import User
 from app.services.passport import passport
 
-passport_router = APIRouter(prefix="/businesses", tags=["passport"])
+passport_router = APIRouter()
 
 @passport_router.get("/{org_id}/passport")
 def get_passport(org_id: int, session: Session = Depends(get_session)):
@@ -35,3 +35,15 @@ def verified_activity(org_id: int, limit: int = 20,
             "steps": ["prescribed", "verified", "dispensed",
                       "stock_reduced", "settled"]})
     return {"items": items}
+
+@passport_router.get("/{org_id}/transactions")
+def transactions(org_id: int, limit: int = 50,
+                 session: Session = Depends(get_session)):
+    from app.models.ledger import Transaction
+    rows = session.exec(select(Transaction)
+        .where(Transaction.org_id == org_id)
+        .order_by(Transaction.occurred_at.desc()).limit(limit)).all()
+    return {"items": [{"id": t.id, "description": t.description,
+                       "amount": t.amount, "type": t.type,
+                       "attestation_level": t.attestation_level,
+                       "occurred_at": t.occurred_at} for t in rows]}

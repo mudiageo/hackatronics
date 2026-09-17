@@ -8,6 +8,6 @@ def get_session():
     with Session(engine) as session:
         yield session
 
-def init_db():
-    import app.models  # noqa
-    SQLModel.metadata.create_all(engine)
+# def init_db():
+#     import app.models  # noqa
+#     SQLModel.metadata.create_all(engine)
