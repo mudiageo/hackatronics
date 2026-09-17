@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus, CheckCircle2, CheckCircle, Circle, FileText, ArrowRight, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getTransactions, Transaction, EvidenceStep } from '../services/transactions.service'
+import { getTransactions } from '../services/transactions.service'
+import type { Transaction, EvidenceStep } from '../services/transactions.service'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
