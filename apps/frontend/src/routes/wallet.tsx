@@ -53,42 +53,19 @@ function WalletRoute() {
   }
 
   const handleReceiveDemo = async () => {
-    toast.promise(
-      receiveFundsFn({ data: { amount: 5000000, description: 'Demo Funding' } }).then(() => router.invalidate()),
-      {
-        loading: 'Generating test deposit...',
-        success: 'Successfully received ₦50,000.00!',
-        error: 'Failed to receive funds'
-      }
+    toast('Generating test deposit...', { icon: '🔄' })
+    try {
+      await receiveFundsFn({ data: { amount: 5000000, description: 'Demo Funding' } })
+      await router.invalidate()
+      toast.success('Successfully received ₦50,000.00!')
+    } catch (err) {
+      toast.error('Failed to receive funds')
+    }
+  }
     )
   }
 
-  if (role === 'Bank') {
-    return (
-      <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold tracking-tight">Wema Bank Core</h1>
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-muted-foreground">This view is for businesses (Clinics and Pharmacies). Bank analysts manage global routing elsewhere.</p>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
-  return (
-    <div className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
-          <Landmark className="w-8 h-8 text-primary" />
-          Wema Business Wallet
-        </h1>
-        <p className="text-muted-foreground mt-2">Manage your operating capital and seamlessly transfer funds.</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Left Column: Balance & Actions */}
+  
         <div className="space-y-6">
           <Card className="bg-gradient-to-br from-primary to-primary/80 border-none shadow-lg text-primary-foreground overflow-hidden relative">
             <div className="absolute top-0 right-0 p-6 opacity-20">
@@ -135,7 +112,7 @@ function WalletRoute() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Send Money</DialogTitle>
-                  <DialogDescription>Transfer funds instantly via Wema Bank infrastructure.</DialogDescription>
+                  <DialogDescription>Transfer funds instantly via our secure infrastructure.</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleTransfer} className="space-y-4 pt-4">
                   <div className="space-y-2">
