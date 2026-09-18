@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill } from "lucide-react";
+import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill } from "Wallet as WalletIcon } from "lucide-react";
 import { useRole } from "./RoleProvider";
 
 export default function Sidebar() {
@@ -42,7 +42,19 @@ export default function Sidebar() {
         >
           <LayoutDashboard className="w-5 h-5" />
           Dashboard
-        </Link>
+          </Link>
+
+        {showTransactions && (
+          <Link 
+            to="/wallet" 
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted-foreground font-medium transition-colors hover:bg-muted/50 hover:text-foreground"
+            activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary" }}
+          >
+            <WalletIcon className="w-5 h-5" />
+            Wallet
+          </Link>
+        )}
+
         
         {showTransactions && (
           <Link 
