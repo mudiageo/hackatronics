@@ -108,7 +108,7 @@ export function MobileNav() {
           
         
         <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 mt-6 px-3">
-          Gemini AI (v2)
+          AI Features
         </div>
         <Link 
           to="/ai-scanner" 
