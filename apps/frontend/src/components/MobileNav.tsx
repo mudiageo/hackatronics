@@ -1,6 +1,6 @@
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill } , Wallet as WalletIcon } from "lucide-react";
+import { Menu, LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill , Wallet as WalletIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useRole } from "./RoleProvider";
 

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill } , Wallet as WalletIcon } from "lucide-react";
+import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill , Wallet as WalletIcon } from "lucide-react";
 import { useRole } from "./RoleProvider";
 
 export default function Sidebar() {
