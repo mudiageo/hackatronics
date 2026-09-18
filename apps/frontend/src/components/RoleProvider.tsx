@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
 type Role = "Clinic" | "Pharmacy" | "Owner" | "Bank";
@@ -11,7 +11,20 @@ interface RoleContextType {
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export function RoleProvider({ children }: { children: ReactNode }) {
-  const [role, setRole] = useState<Role>("Clinic");
+  const [role, setRoleState] = useState<Role>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('active_role');
+      if (saved) return saved as Role;
+    }
+    return "Clinic";
+  });
+
+  const setRole = (newRole: Role) => {
+    setRoleState(newRole);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('active_role', newRole);
+    }
+  };
 
   return (
     <RoleContext.Provider value={{ role, setRole }}>
