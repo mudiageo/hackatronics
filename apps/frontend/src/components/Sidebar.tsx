@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText } from "lucide-react";
+import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill } from "lucide-react";
 import { useRole } from "./RoleProvider";
 
 export default function Sidebar() {
@@ -63,6 +63,29 @@ export default function Sidebar() {
           >
             <Package className="w-5 h-5" />
             Inventory
+          </Link>
+        )}
+
+        
+        {role === 'Clinic' && (
+          <Link 
+            to="/prescribe" 
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted-foreground font-medium transition-colors hover:bg-muted/50 hover:text-foreground"
+            activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary" }}
+          >
+            <Stethoscope className="w-5 h-5" />
+            New Prescription
+          </Link>
+        )}
+
+        {(role === 'Pharmacy' || role === 'Owner') && (
+          <Link 
+            to="/dispense" 
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted-foreground font-medium transition-colors hover:bg-muted/50 hover:text-foreground"
+            activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary" }}
+          >
+            <Pill className="w-5 h-5" />
+            Verify & Dispense
           </Link>
         )}
 
