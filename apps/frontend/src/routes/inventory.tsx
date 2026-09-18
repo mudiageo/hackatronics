@@ -35,6 +35,7 @@ import { useRouter } from '@tanstack/react-router'
 import { addInventoryItemFn } from '../services/inventory.service'
 
 function Inventory() {
+  const formatMoney = (kobo: number) => { return '₦' + (kobo / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
   const inventory = Route.useLoaderData()
   const router = useRouter()
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
@@ -154,7 +155,7 @@ function Inventory() {
                   {item.qtyOnHand}
                 </TableCell>
                 <TableCell className="text-right text-foreground">
-                  ₦{item.unitPrice.toFixed(2)}
+                  {formatMoney(item.unitPrice)}
                 </TableCell>
                 <TableCell className="flex justify-end pr-6">
                   {getStatusBadge(item.status)}
@@ -193,11 +194,11 @@ function Inventory() {
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground mb-1">Unit Price</div>
-                    <div className="text-sm font-medium text-foreground">₦{selectedItem.unitPrice.toFixed(2)}</div>
+                    <div className="text-sm font-medium text-foreground">{formatMoney(selectedItem.unitPrice)}</div>
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground mb-1">Cost Price</div>
-                    <div className="text-sm font-medium text-foreground">₦{selectedItem.costPrice.toFixed(2)}</div>
+                    <div className="text-sm font-medium text-foreground">{formatMoney(selectedItem.costPrice)}</div>
                   </div>
                 </div>
 

@@ -15,6 +15,7 @@ export const Route = createFileRoute('/passport')({
 })
 
 function Passport() {
+  const formatMoney = (kobo: number) => { return '₦' + (kobo / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null)
   const passport = Route.useLoaderData()
 
@@ -73,7 +74,7 @@ function Passport() {
                 onClick={() => setSelectedMetric('Total Verified Income')}
               >
                 <div className="text-sm text-muted-foreground">Total Verified Income</div>
-                <div className="text-xl font-bold">₦{passport.totalIncome.toLocaleString()}</div>
+                <div className="text-xl font-bold">{formatMoney(passport.totalIncome)}</div>
                 <div className="text-xs text-muted-foreground mt-1">Range: {passport.incomeRange}</div>
               </div>
               <div 
@@ -81,7 +82,7 @@ function Passport() {
                 onClick={() => setSelectedMetric('Total Verified Expenses')}
               >
                 <div className="text-sm text-muted-foreground">Total Verified Expenses</div>
-                <div className="text-xl font-bold">₦{passport.totalExpenses.toLocaleString()}</div>
+                <div className="text-xl font-bold">{formatMoney(passport.totalExpenses)}</div>
                 <div className="text-xs text-muted-foreground mt-1">Range: {passport.expenseRange}</div>
               </div>
             </div>
@@ -103,7 +104,7 @@ function Passport() {
                 </p>
                 <div className="mt-6 pt-4 border-t border-border/50">
                   <div className="text-xs text-muted-foreground mb-1">Fixed Operational Cost</div>
-                  <div className="font-semibold text-lg text-foreground">₦{passport.operationalCost.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">/ mo</span></div>
+                  <div className="font-semibold text-lg text-foreground">{formatMoney(passport.operationalCost)} <span className="text-sm font-normal text-muted-foreground">/ mo</span></div>
                 </div>
               </div>
             </div>

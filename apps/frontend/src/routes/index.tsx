@@ -20,15 +20,16 @@ export const Route = createFileRoute('/')({
 function getStatusBadge(status: string) {
   switch (status) {
     case 'attested':
-      return <Badge className="bg-green-100 text-green-700 hover:bg-green-100/80 border-0 flex items-center gap-1 w-fit ml-auto"><CheckCircle2 className="w-3 h-3" /> Attested</Badge>
+      return <Badge className="bg-green-100 text-green-700 hover:bg-green-100/80 border-0 flex items-center gap-1 w-fit"><CheckCircle2 className="w-3 h-3" /> Attested</Badge>
     case 'settled':
-      return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100/80 border-0 flex items-center gap-1 w-fit ml-auto"><CheckCircle className="w-3 h-3" /> Settled</Badge>
+      return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100/80 border-0 flex items-center gap-1 w-fit"><CheckCircle className="w-3 h-3" /> Settled</Badge>
     default:
-      return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100/80 border-0 flex items-center gap-1 w-fit ml-auto"><Circle className="w-3 h-3" /> Recorded</Badge>
+      return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100/80 border-0 flex items-center gap-1 w-fit"><Circle className="w-3 h-3" /> Self-Reported</Badge>
   }
 }
 
 function Dashboard() {
+  const formatMoney = (kobo: number) => { return '₦' + (kobo / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
   const { metricsSummary, coverage, recentActivity } = Route.useLoaderData()
 
   const coverageData = [
@@ -41,9 +42,9 @@ function Dashboard() {
   ]
 
   const coverageConfig = {
-    recorded: { label: "Recorded", color: "#3b82f6" },
-    settled: { label: "Settled", color: "#10b981" },
-    attested: { label: "Attested", color: "#a3e635" },
+    recorded: { label: "Self-Reported", color: "#e5e7eb" },
+    settled: { label: "Settled", color: "#3b82f6" },
+    attested: { label: "Attested", color: "#22c55e" },
   }
 
   return (
@@ -63,7 +64,7 @@ function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`₦${metricsSummary.revenue.toLocaleString()}`}>₦{metricsSummary.revenue.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`₦${metricsSummary.revenue.toLocaleString()}`}>{formatMoney(metricsSummary.revenue)}</div>
           </CardContent>
         </Card>
 
@@ -76,7 +77,7 @@ function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`₦${metricsSummary.expenses.toLocaleString()}`}>₦{metricsSummary.expenses.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`₦${metricsSummary.expenses.toLocaleString()}`}>{formatMoney(metricsSummary.expenses)}</div>
           </CardContent>
         </Card>
 
@@ -89,7 +90,7 @@ function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`₦${metricsSummary.profit.toLocaleString()}`}>₦{metricsSummary.profit.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold text-foreground truncate" title={`₦${metricsSummary.profit.toLocaleString()}`}>{formatMoney(metricsSummary.profit)}</div>
           </CardContent>
         </Card>
 
@@ -100,7 +101,7 @@ function Dashboard() {
             <Banknote className="h-4 w-4 text-primary-foreground/80 shrink-0" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl xl:text-3xl font-bold truncate" title={`₦${metricsSummary.cashPosition.toLocaleString()}`}>₦{metricsSummary.cashPosition.toLocaleString()}</div>
+            <div className="text-2xl xl:text-3xl font-bold truncate" title={`₦${metricsSummary.cashPosition.toLocaleString()}`}>{formatMoney(metricsSummary.cashPosition)}</div>
           </CardContent>
         </Card>
       </div>
@@ -122,9 +123,9 @@ function Dashboard() {
               </div>
               
               <div className="flex flex-wrap gap-6 text-sm font-medium text-foreground items-center">
-                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#3b82f6]"></div> 100% Recorded</div>
-                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#10b981]"></div> {coverage.settled}% Settled</div>
-                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#a3e635]"></div> {coverage.attested}% Attested</div>
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-gray-200"></div> 100% Self-Reported</div>
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-blue-500"></div> {coverage.settled}% Settled</div>
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-500"></div> {coverage.attested}% Attested</div>
               </div>
               
               {/* Health Explanation Alert */}
@@ -172,7 +173,7 @@ function Dashboard() {
                         <div className="text-xs text-muted-foreground">{tx.date} • {tx.type}</div>
                       </TableCell>
                       <TableCell className={`text-right font-medium ${tx.amount > 0 ? "text-foreground" : "text-muted-foreground"}`}>
-                        {tx.amount > 0 ? '+' : ''}₦{Math.abs(tx.amount)}
+                        {tx.amount > 0 ? '+' : ''}{formatMoney(Math.abs(tx.amount))}
                       </TableCell>
                       <TableCell className="text-right">
                         {getStatusBadge(tx.status)}

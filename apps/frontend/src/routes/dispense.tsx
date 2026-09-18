@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Search, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react'
+import { ShieldCheck, ArrowRight, AlertTriangle, XCircle, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { verifyPrescriptionFn, dispensePrescriptionFn } from '../services/prescriptions.service'
+import { useRole } from '../components/RoleProvider'
+import { Badge } from '@/components/ui/badge'
 
 export const Route = createFileRoute('/dispense')({
   component: DispenseRoute,
@@ -15,23 +17,40 @@ export const Route = createFileRoute('/dispense')({
 
 function DispenseRoute() {
   const router = useRouter()
+  const { role } = useRole()
   const [code, setCode] = useState('')
-  const [step, setStep] = useState<'search' | 'verify' | 'success'>('search')
+  const [patientSearch, setPatientSearch] = useState("Patient 421")
+  const patientId = 421;
+  const pharmacistId = 38;
+  
+  const [step, setStep] = useState<'search' | 'verify' | 'invalid' | 'success'>('search')
   const [loading, setLoading] = useState(false)
   const [rxData, setRxData] = useState<any>(null)
+  const [errorData, setErrorData] = useState<{message: string, reason_code: string} | null>(null)
+  const [dispenseData, setDispenseData] = useState<any>(null)
+
+  const formatMoney = (kobo: number) => {
+    return '₦' + (kobo / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  }
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!code) return
     setLoading(true)
+    setErrorData(null)
     
     try {
-      const data = await verifyPrescriptionFn({ code, patient_id: 421, org_id: 23 })
-      setRxData(data)
-      setStep('verify')
-      toast.success('Prescription found and verified!')
+      const data = await verifyPrescriptionFn({ code: code.toUpperCase(), patient_id: patientId, org_id: 23 })
+      if (!data.valid) {
+        setErrorData({ message: data.message || 'Prescription validation failed', reason_code: data.reason_code || 'UNKNOWN_ERROR' })
+        setStep('invalid')
+      } else {
+        setRxData(data)
+        setStep('verify')
+      }
     } catch (err: any) {
-      toast.error(err.message || 'Invalid prescription code')
+      setErrorData({ message: err.message || 'Prescription validation failed', reason_code: err.reason_code || 'NETWORK_ERROR' })
+      setStep('invalid')
     } finally {
       setLoading(false)
     }
@@ -40,17 +59,18 @@ function DispenseRoute() {
   const handleDispense = async () => {
     setLoading(true)
     try {
-      await dispensePrescriptionFn({ 
-        code, 
-        patient_id: rxData.prescription.patient.id,
+      const result = await dispensePrescriptionFn({ 
+        code: code.toUpperCase(), 
+        patient_id: patientId,
         org_id: 23,
-        pharmacist_id: 38
+        pharmacist_id: pharmacistId
       })
+      setDispenseData(result)
       setStep('success')
-      toast.success('Medication dispensed and inventory updated')
-      await router.invalidate() // Refresh inventory/transactions
+      await router.invalidate() 
     } catch (err: any) {
-      toast.error(err.message || 'Failed to dispense')
+      setErrorData({ message: err.message || 'Failed to dispense', reason_code: 'DISPENSE_ERROR' })
+      setStep('invalid')
     } finally {
       setLoading(false)
     }
@@ -58,118 +78,215 @@ function DispenseRoute() {
 
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
+      {role === 'Pharmacy' && (
+        <div className="bg-emerald-900 text-white p-4 rounded-xl mb-6 shadow-sm flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold">Wellcare Pharmacy, Ikeja</h2>
+            <p className="text-emerald-200 text-sm">Pharmacist Portal • Pharm. Tobi Ade</p>
+          </div>
+          <ShieldCheck className="w-8 h-8 opacity-50" />
+        </div>
+      )}
+      
       <PageHeader 
         title="Verify & Dispense" 
-        description="Verify a secure prescription code to dispense medication and update stock." 
+        description="Verify a secure prescription code to dispense medication and automatically update stock." 
       />
       
       <div className="max-w-2xl">
         {step === 'search' && (
           <Card className="border-border shadow-sm">
             <CardHeader>
-              <CardTitle>Enter Prescription Code</CardTitle>
+              <CardTitle>Lookup Prescription</CardTitle>
               <CardDescription>
-                Ask the patient for their 6-character secure code (e.g., RX-A1B2C3).
+                Ask the patient for their 6-character secure code.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSearch} className="flex gap-4">
-                <div className="relative flex-1">
-                  <Search className="w-5 h-5 absolute left-3 top-2.5 text-muted-foreground" />
+              <form onSubmit={handleSearch} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="patientSearch">Patient</Label>
                   <Input 
-                    placeholder="RX-..." 
-                    className="pl-10 text-lg uppercase tracking-wider font-mono"
+                    id="patientSearch" 
+                    value={patientSearch}
+                    onChange={(e) => setPatientSearch(e.target.value)}
+                    placeholder="Search patient..." 
+                  />
+                  <p className="text-xs text-muted-foreground">Selected: Patient ID {patientId}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="code" className="text-lg">Secure Code</Label>
+                  <Input 
+                    id="code" 
+                    name="code" 
                     value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    required
+                    onChange={(e) => setCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. RX-A1B2C3" 
+                    className="text-3xl tracking-widest font-mono h-16 uppercase placeholder:text-muted/50" 
+                    required 
+                    maxLength={10}
                   />
                 </div>
-                <Button type="submit" size="lg" disabled={loading} className="w-32">
-                  {loading ? 'Verifying...' : 'Verify'}
+                
+                <Button type="submit" className="w-full gap-2 h-14 text-lg" disabled={loading || !code}>
+                  <ShieldCheck className="w-5 h-5" /> 
+                  {loading ? 'Verifying on Ledger...' : 'Verify Cryptographic Code'}
                 </Button>
               </form>
             </CardContent>
           </Card>
         )}
 
-        {step === 'verify' && rxData && rxData.prescription && (
-          <Card className="border-border shadow-sm border-primary/20">
-            <CardHeader className="border-b bg-muted/30">
-              <div className="flex items-center gap-2 text-primary font-semibold">
-                <ShieldCheck className="w-5 h-5" />
-                Valid Prescription
+        {step === 'invalid' && errorData && (
+          <Card className="border-red-200 shadow-sm bg-red-50 dark:bg-red-950/20">
+            <CardContent className="pt-8 flex flex-col items-center text-center space-y-6">
+              <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
+                <XCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold text-red-700 dark:text-red-400">Verification Failed</h3>
+                <p className="text-red-600 dark:text-red-300 font-medium text-lg max-w-md">
+                  {errorData.message}
+                </p>
+              </div>
+              <Badge variant="outline" className="text-red-500 border-red-200 bg-white dark:bg-red-950 font-mono">
+                {errorData.reason_code}
+              </Badge>
+              <Button onClick={() => setStep('search')} variant="outline" className="w-full mt-4">
+                Try Another Code
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 'verify' && rxData && (
+          <Card className="border-border shadow-sm">
+            <CardHeader className="bg-muted/30 border-b pb-6">
+              <div className="flex justify-between items-start mb-2">
+                <Badge className="bg-blue-100 text-blue-700 border-none px-3 py-1">Valid Prescription</Badge>
+                <span className="font-mono text-muted-foreground">{rxData.prescription.code}</span>
+              </div>
+              <CardTitle className="text-2xl">{rxData.prescription.patient?.name || `Patient #${patientId}`}</CardTitle>
+              <div className="mt-4 p-4 bg-white dark:bg-card border-l-4 border-primary shadow-sm rounded-r-lg">
+                <p className="text-sm text-muted-foreground uppercase tracking-wider font-bold mb-1">Independence Claim</p>
+                <p className="text-lg font-medium text-foreground">
+                  Issued by {rxData.prescription.prescriber?.name || 'Dr Maximum Alex'} · <span className="text-primary font-bold">Grace Medical Centre</span>
+                </p>
               </div>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
-              <div className="grid grid-cols-2 gap-y-6">
-                <div>
-                  <div className="text-sm text-muted-foreground">Patient Name</div>
-                  <div className="font-semibold text-lg">{rxData.prescription.patient.name}</div>
+              
+              {!rxData.stock_ok && (
+                <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 rounded-lg flex gap-3 items-start">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+                  <div>
+                    <h4 className="font-bold text-amber-800 dark:text-amber-400">Insufficient Stock</h4>
+                    <ul className="list-disc pl-4 mt-1 text-sm text-amber-700 dark:text-amber-300">
+                      {rxData.stock_warnings?.map((w: string, i: number) => <li key={i}>{w}</li>)}
+                      {(!rxData.stock_warnings || rxData.stock_warnings.length === 0) && (
+                        <li>One or more items do not have enough stock to fulfill this prescription.</li>
+                      )}
+                    </ul>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-sm text-muted-foreground">Code</div>
-                  <div className="font-mono font-bold text-lg">{rxData.prescription.code}</div>
+              )}
+
+              <div className="space-y-4 border rounded-xl overflow-hidden">
+                <div className="bg-muted px-4 py-2 grid grid-cols-12 gap-2 text-xs font-bold text-muted-foreground uppercase">
+                  <div className="col-span-6">Medication</div>
+                  <div className="col-span-2 text-center">Qty</div>
+                  <div className="col-span-4 text-right">Line Total</div>
                 </div>
-                <div className="col-span-2">
-                  <div className="text-sm text-muted-foreground">Medications to Dispense</div>
+                <div className="divide-y">
                   {rxData.prescription.items.map((item: any, idx: number) => (
-                    <div key={idx} className="font-semibold text-xl text-primary bg-primary/10 p-4 rounded-lg mt-2 flex items-center justify-between">
-                      <span>{item.drug_name} <span className="text-sm font-normal text-muted-foreground ml-2">({item.dose}, {item.frequency_per_day}x/day for {item.days} days)</span></span>
-                      <span className="bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full">
-                        Qty: {item.quantity}
-                      </span>
+                    <div key={idx} className="px-4 py-3 grid grid-cols-12 gap-2 items-center">
+                      <div className="col-span-6">
+                        <div className="font-bold">{item.drug_name}</div>
+                        <div className="text-sm text-muted-foreground">{item.dose} · {item.frequency_per_day}x/day for {item.days} days</div>
+                      </div>
+                      <div className="col-span-2 text-center font-mono font-medium">
+                        {item.quantity}
+                      </div>
+                      <div className="col-span-4 text-right font-medium">
+                        {formatMoney(item.line_total)}
+                      </div>
                     </div>
                   ))}
                 </div>
-                <div className="col-span-2">
-                  <div className="text-sm text-muted-foreground">Stock Status</div>
-                  {rxData.stock_ok ? (
-                     <div className="font-semibold text-green-600 mt-1">Available in Inventory</div>
-                  ) : (
-                     <div className="font-semibold text-red-600 mt-1">Low Stock Warning: {rxData.stock_warnings.join(', ')}</div>
-                  )}
+                <div className="bg-muted/30 px-4 py-4 border-t flex justify-between items-center">
+                  <span className="font-bold text-muted-foreground">Total (Kobo: {rxData.prescription.total})</span>
+                  <span className="text-2xl font-black text-primary">{formatMoney(rxData.prescription.total)}</span>
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-4 border-t">
+              <div className="flex gap-4 pt-4">
                 <Button variant="outline" className="flex-1" onClick={() => setStep('search')}>
                   Cancel
                 </Button>
                 <Button 
-                  className="flex-1 gap-2" 
+                  className="flex-2 w-2/3 gap-2" 
                   onClick={handleDispense} 
-                  disabled={loading}
+                  disabled={loading || !rxData.stock_ok}
                 >
-                  {loading ? 'Dispensing...' : 'Dispense Medication'} <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4" /> 
+                  {loading ? 'Dispensing...' : 'Confirm & Dispense'}
                 </Button>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {step === 'success' && (
-           <Card className="border-border shadow-sm border-green-500/50 bg-green-500/5">
-           <CardContent className="pt-6 flex flex-col items-center text-center space-y-4">
-             <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-               <CheckCircle2 className="w-8 h-8 text-green-600" />
-             </div>
-             
-             <div className="space-y-2">
-               <h3 className="text-2xl font-bold">Successfully Dispensed</h3>
-               <p className="text-muted-foreground max-w-md mx-auto">
-                 The medication has been logged as dispensed, inventory has been reduced, and a settled transaction has been recorded.
-               </p>
-             </div>
+        {step === 'success' && dispenseData && (
+          <Card className="border-border shadow-sm border-green-500/50 bg-green-50/30 dark:bg-green-950/10">
+            <CardContent className="pt-8 flex flex-col items-center text-center space-y-8">
+              
+              <div className="space-y-4 flex flex-col items-center">
+                <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-2">
+                  <CheckCircle2 className="w-10 h-10 text-green-600" />
+                </div>
+                <h3 className="text-3xl font-bold text-foreground">Successfully Dispensed</h3>
+                
+                <div className="bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-6 py-2 rounded-full font-black text-lg tracking-wide border border-green-200 dark:border-green-800 flex items-center gap-2 shadow-sm">
+                  <ShieldCheck className="w-5 h-5" /> 
+                  Recorded as ATTESTED revenue
+                </div>
+              </div>
 
-             <Button variant="outline" className="mt-4" onClick={() => {
-               setCode('')
-               setStep('search')
-               setRxData(null)
-             }}>
-               Verify Another Code
-             </Button>
-           </CardContent>
-         </Card>
+              <div className="w-full bg-background border rounded-xl p-6 shadow-inner text-left space-y-4">
+                <div className="flex justify-between items-center border-b pb-4">
+                  <span className="text-muted-foreground font-medium">Payment Ref</span>
+                  <span className="font-mono font-bold text-lg">{dispenseData.payment_reference}</span>
+                </div>
+                
+                <div className="pt-2">
+                  <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">Stock Movement Updates</h4>
+                  <div className="space-y-3">
+                    {dispenseData.stock_changes?.map((change: any, i: number) => (
+                      <div key={i} className="flex justify-between items-center bg-muted/30 p-3 rounded-lg border">
+                        <span className="font-medium">{change.drug_name}</span>
+                        <div className="flex items-center gap-3 font-mono text-lg">
+                          <span className="text-muted-foreground">{change.before}</span>
+                          <ArrowRight className="w-4 h-4 text-primary" />
+                          <span className="font-black text-primary">{change.after}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {(!dispenseData.stock_changes || dispenseData.stock_changes.length === 0) && (
+                      <div className="text-muted-foreground text-sm italic">Stock changes recorded on ledger.</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <Button size="lg" onClick={() => {
+                setCode('')
+                setStep('search')
+              }} className="w-full">
+                Verify Next Prescription
+              </Button>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

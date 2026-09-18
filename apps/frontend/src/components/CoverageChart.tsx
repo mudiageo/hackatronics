@@ -10,7 +10,7 @@ const NestedBarShape = (props: any) => {
   return (
     <g>
       {/* Background (Recorded 100%) - Blue */}
-      <rect x={x} y={y} width={width} height={height} rx={height / 2} fill="#3b82f6" opacity={0.9} />
+      <rect x={x} y={y} width={width} height={height} rx={height / 2} fill="#e5e7eb" opacity={0.9} />
       
       {/* Middle (Settled) - Teal */}
       <rect 
@@ -19,7 +19,7 @@ const NestedBarShape = (props: any) => {
         width={getWidth(payload.settled, 8)} 
         height={height - 8} 
         rx={(height - 8) / 2} 
-        fill="#10b981" 
+        fill="#3b82f6" 
       />
       
       {/* Foreground (Attested) - Lime Green */}
@@ -29,7 +29,7 @@ const NestedBarShape = (props: any) => {
         width={getWidth(payload.attested, 16)} 
         height={height - 16} 
         rx={(height - 16) / 2} 
-        fill="#a3e635" 
+        fill="#22c55e" 
       />
     </g>
   )

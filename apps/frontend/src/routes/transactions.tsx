@@ -25,7 +25,7 @@ function getStatusBadge(status: string) {
     case 'settled':
       return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100/80 border-0 flex items-center gap-1 w-fit"><CheckCircle className="w-3 h-3" /> Settled</Badge>
     default:
-      return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100/80 border-0 flex items-center gap-1 w-fit"><Circle className="w-3 h-3" /> Recorded</Badge>
+      return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100/80 border-0 flex items-center gap-1 w-fit"><Circle className="w-3 h-3" /> Self-Reported</Badge>
   }
 }
 
@@ -33,6 +33,7 @@ import { useRouter } from '@tanstack/react-router'
 import { addTransactionFn } from '../services/transactions.service'
 
 function Transactions() {
+  const formatMoney = (kobo: number) => { return '₦' + (kobo / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
   const transactions = Route.useLoaderData()
   const router = useRouter()
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null)
@@ -163,7 +164,7 @@ function Transactions() {
                   </TableCell>
                   <TableCell className="text-foreground">{tx.counterparty}</TableCell>
                   <TableCell className={`text-right font-medium ${tx.amount > 0 ? "text-foreground" : "text-muted-foreground"}`}>
-                    {tx.amount > 0 ? '+' : ''}₦{Math.abs(tx.amount).toLocaleString()}
+                    {tx.amount > 0 ? '+' : ''}{formatMoney(Math.abs(tx.amount)).replace("₦", "")}
                   </TableCell>
                   <TableCell className="flex justify-end pr-6">
                     {getStatusBadge(tx.status)}
@@ -200,7 +201,7 @@ function Transactions() {
                   <div>
                     <div className="text-xs text-muted-foreground mb-1">Amount</div>
                     <div className={`text-2xl font-bold ${selectedTx.amount > 0 ? "text-foreground" : "text-muted-foreground"}`}>
-                      {selectedTx.amount > 0 ? '+' : ''}₦{Math.abs(selectedTx.amount).toLocaleString()}
+                      {selectedTx.amount > 0 ? '+' : ''}{formatMoney(Math.abs(selectedTx.amount)).replace("₦", "")}
                     </div>
                   </div>
                   <div>

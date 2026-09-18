@@ -11,6 +11,7 @@ export const Route = createFileRoute('/verified-activity')({
 })
 
 function VerifiedActivity() {
+  const formatMoney = (kobo: number) => { return '₦' + (kobo / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
   const activities = Route.useLoaderData()
 
   return (
@@ -46,7 +47,7 @@ function VerifiedActivity() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-foreground mb-1">₦{activity.amount.toFixed(2)}</div>
+                  <div className="text-2xl font-bold text-foreground mb-1">{formatMoney(activity.amount)}</div>
                   {activity.status === 'settled' ? (
                     <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100/80 border-0">Fully Settled</Badge>
                   ) : (
@@ -62,7 +63,7 @@ function VerifiedActivity() {
                   <div 
                     className="absolute top-4 left-4 h-0.5 bg-accent z-0 transition-all duration-500"
                     style={{ 
-                      width: `₦{
+                      width: `${
                         (activity.steps.filter(s => s.status === 'completed').length / (activity.steps.length - 1)) * 100
                       }%` 
                     }}
@@ -71,7 +72,7 @@ function VerifiedActivity() {
                   <div className="relative z-10 flex justify-between">
                     {activity.steps.map((step, idx) => (
                     <div key={idx} className="flex flex-col items-center gap-2 relative">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors duration-300 z-10 ₦{
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors duration-300 z-10 ${
                         step.status === 'completed' ? 'bg-accent border-accent text-accent-foreground' : 
                         step.status === 'current' ? 'bg-background border-accent text-accent' : 
                         'bg-background border-muted text-muted-foreground'
@@ -79,11 +80,11 @@ function VerifiedActivity() {
                         {step.status === 'completed' ? (
                           <CheckCircle2 className="w-5 h-5" />
                         ) : (
-                          <Circle className={`w-3 h-3 ₦{step.status === 'current' ? 'fill-accent' : 'fill-muted-foreground'}`} />
+                          <Circle className={`w-3 h-3 ${step.status === 'current' ? 'fill-accent' : 'fill-muted-foreground'}`} />
                         )}
                       </div>
                       <div className="text-center w-24">
-                        <div className={`text-sm font-bold ₦{
+                        <div className={`text-sm font-bold ${
                           step.status === 'upcoming' ? 'text-muted-foreground' : 'text-foreground'
                         }`}>
                           {step.label}

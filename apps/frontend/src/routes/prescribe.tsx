@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { FileText, Copy, CheckCircle2 } from 'lucide-react'
+import { FileText, Copy, CheckCircle2, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { generatePrescriptionFn } from '../services/prescriptions.service'
+import { useRole } from '../components/RoleProvider'
 
 export const Route = createFileRoute('/prescribe')({
   component: PrescribeRoute,
@@ -15,32 +16,54 @@ export const Route = createFileRoute('/prescribe')({
 
 function PrescribeRoute() {
   const router = useRouter()
-  const [generatedCode, setGeneratedCode] = useState<string | null>(null)
+  const { role } = useRole()
+  const [generatedRx, setGeneratedRx] = useState<any | null>(null)
   const [loading, setLoading] = useState(false)
+  
+  // Simulated Typeaheads
+  const [patientSearch, setPatientSearch] = useState("Patient 421")
+  const patientId = 421;
+  
+  const [items, setItems] = useState([
+    { drugId: 57, drugName: "Drug 57", dose: "500mg", frequency: 3, days: 7, unitPriceKobo: 150000 }
+  ])
+
+  const formatMoney = (kobo: number) => {
+    return '₦' + (kobo / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  }
+
+  const addItem = () => {
+    setItems([...items, { drugId: 57, drugName: "Drug 57", dose: "", frequency: 1, days: 1, unitPriceKobo: 150000 }])
+  }
+  
+  const removeItem = (idx: number) => {
+    setItems(items.filter((_, i) => i !== idx))
+  }
+
+  const updateItem = (idx: number, field: string, value: any) => {
+    const newItems = [...items]
+    newItems[idx] = { ...newItems[idx], [field]: value }
+    setItems(newItems)
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     
-    const formData = new FormData(e.currentTarget)
-    
     try {
       const rx = await generatePrescriptionFn({
-        patient_id: parseInt(formData.get('patientId') as string, 10),
-        prescriber_id: 36, // Hardcoded doctor ID
-        items: [
-          {
-            drug_id: parseInt(formData.get('drugId') as string, 10),
-            dose: formData.get('dose') as string,
-            frequency_per_day: parseInt(formData.get('frequency') as string, 10),
-            days: parseInt(formData.get('days') as string, 10),
-          }
-        ]
+        patient_id: patientId,
+        prescriber_id: 36, // Dr Maximum Alex
+        items: items.map(item => ({
+          drug_id: item.drugId,
+          dose: item.dose,
+          frequency_per_day: item.frequency,
+          days: item.days,
+        }))
       })
       
-      setGeneratedCode(rx.code)
+      setGeneratedRx(rx)
       toast.success('Prescription generated successfully')
-      
       await router.invalidate()
     } catch (error: any) {
       toast.error(error.message || 'Failed to generate prescription')
@@ -49,90 +72,161 @@ function PrescribeRoute() {
     }
   }
 
-  const copyCode = () => {
-    if (generatedCode) {
-      navigator.clipboard.writeText(generatedCode)
-      toast.success('Code copied to clipboard')
-    }
-  }
-
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
+      {role === 'Clinic' && (
+        <div className="bg-blue-900 text-white p-4 rounded-xl mb-6 shadow-sm flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold">Grace Medical Centre</h2>
+            <p className="text-blue-200 text-sm">Prescriber Portal • Dr Maximum Alex</p>
+          </div>
+          <FileText className="w-8 h-8 opacity-50" />
+        </div>
+      )}
+      
       <PageHeader 
         title="New Prescription" 
         description="Generate a secure, verifiable prescription code for a patient." 
       />
       
-      <div className="max-w-2xl">
-        {!generatedCode ? (
+      <div className="max-w-3xl">
+        {!generatedRx ? (
           <Card className="border-border shadow-sm">
             <CardHeader>
               <CardTitle>Prescription Details</CardTitle>
               <CardDescription>
-                Enter the medication details below. A unique cryptographic code will be generated.
+                Search for a patient and add medication items.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-8">
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="patientId">Patient ID</Label>
-                    <Input id="patientId" name="patientId" type="number" defaultValue="421" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="drugId">Drug ID</Label>
-                    <Input id="drugId" name="drugId" type="number" defaultValue="57" required />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="patientSearch">Patient</Label>
+                  <Input 
+                    id="patientSearch" 
+                    value={patientSearch}
+                    onChange={(e) => setPatientSearch(e.target.value)}
+                    placeholder="Search patient by name or phone..." 
+                    className="max-w-md"
+                  />
+                  <p className="text-xs text-muted-foreground">Selected: Patient ID {patientId}</p>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="dose">Dose</Label>
-                    <Input id="dose" name="dose" placeholder="500mg" defaultValue="500mg" required />
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base">Medication Items</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={addItem} className="gap-2">
+                      <Plus className="w-4 h-4" /> Add Drug
+                    </Button>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="frequency">Freq / Day</Label>
-                    <Input id="frequency" name="frequency" type="number" defaultValue="3" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="days">Days</Label>
-                    <Input id="days" name="days" type="number" defaultValue="7" required />
+                  
+                  {items.map((item, idx) => (
+                    <div key={idx} className="p-4 border rounded-xl bg-muted/20 space-y-4 relative">
+                      {items.length > 1 && (
+                        <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-red-500" onClick={() => removeItem(idx)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Drug Search</Label>
+                          <Input value={item.drugName} readOnly className="bg-muted/50" />
+                          <p className="text-xs text-muted-foreground">ID: {item.drugId} • Unit Price: {formatMoney(item.unitPriceKobo)}</p>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Dose</Label>
+                          <Input value={item.dose} onChange={(e) => updateItem(idx, 'dose', e.target.value)} placeholder="e.g. 500mg" required />
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-4 items-end">
+                        <div className="space-y-2">
+                          <Label>Freq / Day</Label>
+                          <Input type="number" min="1" value={item.frequency} onChange={(e) => updateItem(idx, 'frequency', parseInt(e.target.value)||0)} required />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Days</Label>
+                          <Input type="number" min="1" value={item.days} onChange={(e) => updateItem(idx, 'days', parseInt(e.target.value)||0)} required />
+                        </div>
+                        <div className="p-3 bg-muted rounded-lg text-center border">
+                          <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Total Quantity</div>
+                          <div className="font-mono font-bold text-foreground">
+                            {item.frequency} × {item.days} = <span className="text-primary text-lg">{item.frequency * item.days} units</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  <div className="flex justify-end pt-2 border-t">
+                    <div className="text-right">
+                      <div className="text-sm text-muted-foreground">Estimated Total (Before Markup)</div>
+                      <div className="text-2xl font-bold text-foreground">
+                        {formatMoney(items.reduce((acc, item) => acc + (item.frequency * item.days * item.unitPriceKobo), 0))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full gap-2" disabled={loading}>
-                  <FileText className="w-4 h-4" /> 
-                  {loading ? 'Generating...' : 'Generate Secure Prescription'}
+                <Button type="submit" className="w-full gap-2 text-lg h-12" disabled={loading}>
+                  <FileText className="w-5 h-5" /> 
+                  {loading ? 'Generating...' : 'Sign & Generate Prescription'}
                 </Button>
               </form>
             </CardContent>
           </Card>
         ) : (
           <Card className="border-border shadow-sm border-primary/50 bg-primary/5">
-            <CardContent className="pt-6 flex flex-col items-center text-center space-y-6">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-                <CheckCircle2 className="w-8 h-8 text-green-600" />
-              </div>
+            <CardContent className="pt-8 flex flex-col items-center text-center space-y-8">
               
-              <div className="space-y-2">
-                <h3 className="text-2xl font-bold">Prescription Ready</h3>
+              <div className="space-y-3">
+                <h3 className="text-3xl font-bold text-foreground">Prescription Ready</h3>
                 <p className="text-muted-foreground">
-                  Provide this code to the patient. They can use it at any verified pharmacy.
+                  Give this code to the patient. Valid at any participating pharmacy.
                 </p>
               </div>
 
-              <div className="bg-background border-2 border-dashed border-primary/30 p-6 rounded-xl w-full flex flex-col items-center gap-4">
-                <div className="text-4xl font-mono font-bold tracking-widest text-primary">
-                  {generatedCode}
+              <div className="bg-background border-4 border-primary p-8 rounded-2xl w-full max-w-md shadow-lg flex flex-col items-center gap-6">
+                <div className="text-6xl sm:text-7xl font-mono font-black tracking-widest text-primary drop-shadow-sm">
+                  {generatedRx.code}
                 </div>
-                <Button variant="outline" onClick={copyCode} className="gap-2">
-                  <Copy className="w-4 h-4" /> Copy Code
+                <Button variant="outline" size="lg" onClick={() => {
+                  navigator.clipboard.writeText(generatedRx.code)
+                  toast.success('Code copied to clipboard')
+                }} className="gap-2 w-full">
+                  <Copy className="w-5 h-5" /> Copy Code
                 </Button>
               </div>
+              
+              <div className="w-full max-w-md text-left space-y-4 bg-background p-6 rounded-xl border shadow-sm">
+                <div className="flex justify-between border-b pb-3">
+                  <span className="text-muted-foreground">Patient</span>
+                  <span className="font-bold">{generatedRx.patient?.name || `Patient #${patientId}`}</span>
+                </div>
+                <div className="flex justify-between border-b pb-3">
+                  <span className="text-muted-foreground">Prescriber</span>
+                  <span className="font-bold text-primary">Dr Maximum Alex (Grace Medical Centre)</span>
+                </div>
+                <div className="flex justify-between border-b pb-3">
+                  <span className="text-muted-foreground">Expires</span>
+                  <span className="font-medium">{new Date(generatedRx.expires_at || Date.now() + 86400000).toLocaleDateString()}</span>
+                </div>
+                
+                <div className="pt-2 space-y-3">
+                  <span className="text-muted-foreground text-sm uppercase font-bold tracking-wider">Items</span>
+                  {items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between text-sm">
+                      <span>{item.drugName} ({item.dose})</span>
+                      <span className="font-mono">{item.frequency * item.days} units</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-              <Button variant="ghost" onClick={() => setGeneratedCode(null)}>
-                Create Another Prescription
+              <Button size="lg" variant="secondary" onClick={() => setGeneratedRx(null)} className="w-full max-w-md h-12">
+                Start New Prescription
               </Button>
             </CardContent>
           </Card>
