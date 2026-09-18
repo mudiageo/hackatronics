@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Inventory</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<main>
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:start;gap:16px;flex-wrap:wrap">
+    <div>
+      <h1>Inventory</h1>
+      <p class="lede">Stock is derived from movements, never edited directly &mdash;
+         so every level traces back to a purchase or a dispense.</p>
+    </div>
+    <button id="add">+ Add item</button>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th>Item</th><th class="num">Qty on hand</th>
+        <th class="num">Unit cost</th><th class="num">Unit price</th>
+        <th class="num">Stock value</th><th class="right">Status</th>
+      </tr></thead>
+      <tbody id="rows"><tr><td colspan="6" class="spin">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modalbg hide" id="modal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:start">
+      <div>
+        <h2 class="mb0">Add stock</h2>
+        <p class="muted small">Records a stock-in movement against an existing product.</p>
+      </div>
+      <button class="iconbtn" id="close">&times;</button>
+    </div>
+
+    <div class="field" style="margin-top:14px">
+      <label>Product</label>
+      <select id="drug"></select>
+    </div>
+    <div class="field">
+      <label>Quantity received</label>
+      <input id="qty" type="number" min="1" value="100">
+    </div>
+
+    <div id="merr"></div>
+    <div class="row">
+      <button class="ghost" id="cancel">Cancel</button>
+      <button id="save">Save movement</button>
+    </div>
+  </div>
+</div>
+</main>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/layout.js"></script>
+<script src="/static/js/inventory.js"></script>
+</body>
+</html>

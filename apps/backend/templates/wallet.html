@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wallet</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body data-role="owner">
+<main>
+<div class="wrap">
+  <h1>Business wallet <span class="soon">V2</span></h1>
+  <p class="lede">A Wema-backed account for the business, so money movement is
+     recorded the moment it happens instead of being typed in later.</p>
+
+  <div class="walletbal">
+    <div class="lab">Available balance</div>
+    <div class="amt">&#8358;0.00</div>
+    <div class="acct">Wema Bank &middot; 0&bull;&bull; &bull;&bull;&bull; &bull;&bull;&bull;&bull; &middot; not yet provisioned</div>
+  </div>
+
+  <div class="wactions v2">
+    <div class="wact"><div class="ico">&#128229;</div><div class="nm">Receive money</div></div>
+    <div class="wact"><div class="ico">&#128228;</div><div class="nm">Send money</div></div>
+    <div class="wact"><div class="ico">&#128176;</div><div class="nm">Withdraw</div></div>
+    <div class="wact"><div class="ico">&#127974;</div><div class="nm">Bank transfer</div></div>
+    <div class="wact"><div class="ico">&#128220;</div><div class="nm">History</div></div>
+  </div>
+
+  <div class="card mt18">
+    <h2>Transaction history</h2>
+    <table>
+      <tbody>
+        <tr><td colspan="3" class="spin">No wallet activity &mdash; account not provisioned.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Why this matters for the evidence model</h2>
+    <p class="muted mb0">Today a counter sale is typed in, so it sits at
+      <span class="badge self">SELF-REPORTED</span>. With the wallet collecting the
+      payment, the same sale settles through the rail and moves up to
+      <span class="badge settled">SETTLED</span> automatically &mdash; no extra work for
+      the pharmacist. Deposits stay with Wema, and the lending book gets a
+      repayment stream it can see.</p>
+  </div>
+
+  <div class="card">
+    <h2>What ships in v2</h2>
+    <table>
+      <tbody>
+        <tr><td>Account provisioning</td><td class="muted">Wema virtual account per business</td></tr>
+        <tr><td>Collections</td><td class="muted">Card, transfer, USSD and NQR at the counter</td></tr>
+        <tr><td>Payouts</td><td class="muted">Supplier payments and staff salaries</td></tr>
+        <tr><td>Auto-tiering</td><td class="muted">Settled evidence attached without manual entry</td></tr>
+        <tr><td>Repayment</td><td class="muted">Inventory financing repaid from the dispensing stream</td></tr>
+      </tbody>
+    </table>
+    <p class="muted small mb0" style="margin-top:14px">
+      Nothing on this page is live. It shows where the rail plugs into Wema,
+      not a claim that it already does.</p>
+  </div>
+</div>
+</main>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/layout.js"></script>
+<script src="/static/js/wallet.js"></script>
+</body>
+</html>

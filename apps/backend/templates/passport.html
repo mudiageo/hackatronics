@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Financial Passport</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body data-role="bank">
+<main>
+<div class="wrap">
+  <h1 id="biz">Financial Passport</h1>
+  <p class="lede">What a lender sees. Every figure traces back to a transaction
+     three independent parties signed.</p>
+
+  <div class="grid g2">
+    <div class="card mb0">
+      <h2>Evidence coverage</h2>
+      <div class="covbar">
+        <div class="settled" id="bar-settled" style="width:0"></div>
+        <div class="attested" id="bar-attested" style="width:0"></div>
+      </div>
+      <div class="covlegend">
+        <span><i class="sw" style="background:#223052"></i> <b>100%</b>&nbsp;recorded</span>
+        <span><i class="sw" style="background:var(--blue)"></i> <b id="l-set">–</b>&nbsp;settled</span>
+        <span><i class="sw" style="background:var(--green)"></i> <b id="l-att">–</b>&nbsp;attested</span>
+      </div>
+      <p class="muted small mt18 mb0" id="cov-note"></p>
+    </div>
+
+    <div class="card mb0" style="text-align:center;display:flex;flex-direction:column;justify-content:center">
+      <div class="muted small">Financing readiness</div>
+      <div style="font-size:54px;font-weight:700;letter-spacing:-2px" id="score">–</div>
+      <div class="muted small" id="weights"></div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
+        <div class="muted small">Indicative limit</div>
+        <div style="font-size:21px;font-weight:700" id="limit">–</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g4 mt18" id="metrics"></div>
+
+  <div class="card" id="flagcard"></div>
+
+  <div class="card">
+    <h2>Evidence</h2>
+    <p class="muted small">The most recent attested records behind these figures.</p>
+    <table>
+      <thead><tr><th>Date</th><th>Prescriber</th><th>Issuing organisation</th><th class="num">Amount</th></tr></thead>
+      <tbody id="evidence"></tbody>
+    </table>
+  </div>
+
+  <p class="muted small">
+    This is a financing-readiness profile, not a credit decision. Underwriting remains with the bank.
+  </p>
+</div>
+</main>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/layout.js"></script>
+<script src="/static/js/passport.js"></script>
+</body>
+</html>

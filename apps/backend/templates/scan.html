@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI Scan</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body data-role="pharmacy">
+<main>
+<div class="wrap narrow">
+  <h1>Scan a receipt</h1>
+  <p class="lede">Photograph a handwritten sales note or printed receipt.
+     The AI reads it, matches products against your inventory, and you confirm
+     before anything is saved.</p>
+
+  <div id="step-upload">
+    <div class="drop" id="drop">
+      <div class="ico">&#128247;</div>
+      <div style="font-weight:600;margin-bottom:4px">Choose a photo</div>
+      <div class="muted small">JPG or PNG, up to 6MB</div>
+    </div>
+    <input type="file" id="file" accept="image/*" style="display:none">
+  </div>
+
+  <div id="result"></div>
+</div>
+</main>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/layout.js"></script>
+<script src="/static/js/scan.js"></script>
+</body>
+</html>
