@@ -40,6 +40,7 @@ function Transactions() {
   const router = useRouter()
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null)
   const [isScanning, setIsScanning] = useState(false)
+  const [formData, setFormData] = useState({ description: '', counterparty: '', amount: '', type: '' })
   
   const handleFileScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -53,18 +54,12 @@ function Transactions() {
         
         const res = await scanTransactionFn({ data: { base64Data: base64Str, mimeType: file.type }});
         
-        const descEl = document.getElementById('description') as HTMLInputElement;
-        if (descEl) descEl.value = 'AI Scanned Sale: ' + res.items.map((i: any) => i.read_as).join(', ');
-        
-        const amountInput = document.getElementById('amount') as HTMLInputElement;
-        if (amountInput) amountInput.value = (res.amount / 100).toString();
-        
-        const counterpartyEl = document.getElementById('counterparty') as HTMLInputElement;
-        if (counterpartyEl) counterpartyEl.value = res.customer || 'Walk-in Customer';
-        
-        const typeEl = document.getElementById('type') as HTMLInputElement;
-        if (typeEl) typeEl.value = 'Pharmacy Sales';
-        
+        setFormData({
+          description: 'AI Scanned Sale: ' + res.items.map((i: any) => i.read_as).join(', '),
+          amount: (res.amount / 100).toString(),
+          counterparty: res.customer || 'Walk-in Customer',
+          type: 'Pharmacy Sales'
+        });
         setIsAddModalOpen(true);
       };
       reader.readAsDataURL(file);
@@ -143,7 +138,7 @@ function Transactions() {
             </div>
             <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
               <DialogTrigger asChild>
-                <Button className="flex gap-2 items-center">
+                <Button className="flex gap-2 items-center" onClick={() => setFormData({ description: "", counterparty: "", amount: "", type: "" })}>
                   <Plus className="w-4 h-4" /> Add Transaction
                 </Button>
               </DialogTrigger>
@@ -157,20 +152,20 @@ function Transactions() {
               <form onSubmit={handleAddTransaction} className="space-y-4 pt-4">
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
-                  <Input id="description" name="description" placeholder="e.g. Office Supplies" required />
+                  <Input id="description" name="description" placeholder="e.g. Office Supplies" required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="counterparty">Counterparty</Label>
-                  <Input id="counterparty" name="counterparty" placeholder="e.g. Stationery Hub" required />
+                  <Input id="counterparty" name="counterparty" placeholder="e.g. Stationery Hub" required value={formData.counterparty} onChange={e => setFormData({...formData, counterparty: e.target.value})} />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="amount">Amount (₦)</Label>
-                    <Input id="amount" name="amount" type="number" step="0.01" placeholder="-150.00" required />
+                    <Input id="amount" name="amount" type="number" step="0.01" placeholder="-150.00" required value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="type">Type</Label>
-                    <Input id="type" name="type" placeholder="e.g. Expense" required />
+                    <Input id="type" name="type" placeholder="e.g. Expense" required value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} />
                   </div>
                 </div>
                 <div className="space-y-2">
