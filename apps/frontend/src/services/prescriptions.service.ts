@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-import { getRequestHeader } from '@tanstack/react-start/server'
+
 import { db } from '../db/in-memory'
 import type { Prescription } from '../db/in-memory'
 

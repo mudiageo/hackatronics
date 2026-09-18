@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-import { getRequestHeader } from '@tanstack/react-start/server'
+
 import { db } from '../db/in-memory'
 
 export interface Transaction {
@@ -15,6 +15,7 @@ export interface Transaction {
 
 export const getTransactions = createServerFn({ method: 'GET' }).handler(async () => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
+    const { getRequestHeader } = await import('@tanstack/react-start/server');
     const cookie = getRequestHeader('cookie') || '';
     const match = cookie.match(/active_org_id=(\d+)/);
     const org_id = match ? parseInt(match[1]) : 23;
@@ -49,6 +50,7 @@ export const addTransactionFn = createServerFn({ method: 'POST' })
   .validator((data: Omit<Transaction, 'id' | 'status' | 'evidenceChain'>) => data)
   .handler(async ({ data }) => {
     const useMocks = process.env.VITE_USE_MOCKS !== 'false';
+    const { getRequestHeader } = await import('@tanstack/react-start/server');
     const cookie = getRequestHeader('cookie') || '';
     const match = cookie.match(/active_org_id=(\d+)/);
     const org_id = match ? parseInt(match[1]) : 23;
