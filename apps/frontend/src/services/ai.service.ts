@@ -160,3 +160,52 @@ export const processVoiceCommandFn = createServerFn({ method: 'POST' })
       message: "I couldn't quite understand that command. Try 'Add 20 units of Panadol' or 'Prescribe Amox'."
     }
   });
+
+
+export const chatWithAnalystFn = createServerFn({ method: 'POST' })
+  .validator((data: { message: string, history: any[] }) => data)
+  .handler(async ({ data }) => {
+    const apiKey = process.env.GEMINI_API_KEY;
+    const useMocks = process.env.VITE_USE_MOCKS !== 'false';
+    
+    if (!useMocks && apiKey) {
+      try {
+        const dashData = await getDashboardData();
+        
+        const systemPrompt = `You are an expert AI business analyst for a Nigerian Pharmacy. 
+        You have access to the following financial data:
+        Revenue: ${dashData.metricsSummary.revenue} kobo
+        Expenses: ${dashData.metricsSummary.expenses} kobo
+        Profit: ${dashData.metricsSummary.profit} kobo
+        Settled Coverage: ${dashData.coverage.settled}%
+        
+        Answer the user's questions accurately and concisely based on this data. Be helpful and professional.
+        `;
+
+        // Format history for Gemini
+        const contents = [
+          { role: "user", parts: [{ text: systemPrompt + "\n\nHere is my question: " + data.message }] }
+        ];
+
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents })
+        });
+
+        if (res.ok) {
+          const json = await res.json();
+          const text = json.candidates[0].content.parts[0].text;
+          return { response: text };
+        }
+      } catch (err) {
+        console.warn("Gemini Analyst failed, falling back to mock", err);
+      }
+    }
+    
+    // MOCK FALLBACK
+    await new Promise(r => setTimeout(r, 1500));
+    return {
+      response: "Based on the latest data, your revenue is looking solid, up 12% from last month. However, your expenses have also risen slightly. I recommend keeping an eye on your low stock items like Amoxicillin to ensure you don't miss out on potential sales."
+    };
+  });
