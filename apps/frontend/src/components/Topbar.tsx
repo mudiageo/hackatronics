@@ -1,4 +1,7 @@
-import { Search, Bell, User, LogOut, Settings, FileText, ShieldCheck } from "lucide-react";
+import { Search, Bell, User, LogOut, Settings, FileText, ShieldCheck, Mic } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { processVoiceCommandFn } from "../services/ai.service";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "./mode-toggle";
 import { MobileNav } from "./MobileNav";
@@ -15,6 +18,30 @@ import {
 
 export default function Topbar() {
   const { role, setRole } = useRole();
+  const [isListening, setIsListening] = useState(false);
+  
+  const handleVoiceCommand = async () => {
+    setIsListening(true);
+    toast("Listening...", { icon: <Mic className="w-4 h-4 animate-pulse" /> });
+    
+    // Simulate recording for 2 seconds
+    setTimeout(async () => {
+      try {
+        const res = await processVoiceCommandFn({ data: { transcript: "Add 20 units of Panadol Extra" } });
+        setIsListening(false);
+        toast.success(res.message);
+        // In a real app, we'd navigate to the right page or open a modal with res.data
+        if (res.intent === 'add_inventory') {
+          setTimeout(() => window.location.href = '/inventory', 1000);
+        } else if (res.intent === 'prescribe') {
+          setTimeout(() => window.location.href = '/prescribe', 1000);
+        }
+      } catch (err) {
+        setIsListening(false);
+        toast.error("Failed to process voice command");
+      }
+    }, 2000);
+  };
 
   return (
     <header className="h-20 shrink-0 px-4 md:px-8 flex items-center justify-between border-b border-border bg-card sticky top-0 z-40 gap-2 md:gap-4">
@@ -68,6 +95,14 @@ export default function Topbar() {
           <option value="Bank">Role: Bank</option>
         </select>
 
+        <Button 
+          variant={isListening ? "default" : "ghost"} 
+          size="icon" 
+          onClick={handleVoiceCommand}
+          className={`rounded-full ${isListening ? 'bg-red-500 hover:bg-red-600 animate-pulse' : 'bg-muted text-muted-foreground hover:text-foreground'}`}
+        >
+          <Mic className="w-5 h-5" />
+        </Button>
         <div className="hidden sm:block">
           <ModeToggle />
         </div>

@@ -31,6 +31,18 @@ function getStatusBadge(status: string) {
 function Dashboard() {
   const formatMoney = (kobo: number) => { return '₦' + (kobo / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
   const { metricsSummary, coverage, recentActivity } = Route.useLoaderData()
+  const [analysis, setAnalysis] = useState<any>(null)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  
+  const handleAnalyze = async () => {
+    setIsAnalyzing(true)
+    try {
+      const data = await analyzeBusinessFn()
+      setAnalysis(data)
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }
 
   const coverageData = [
     {
@@ -49,10 +61,57 @@ function Dashboard() {
 
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8">
-      <PageHeader 
-        title="Business Health" 
-        description="Monitor the financial and operational health of the business based on verified data." 
-      />
+      <div className="flex justify-between items-start">
+        <PageHeader 
+          title="Business Health" 
+          description="Monitor the financial and operational health of the business based on verified data." 
+        />
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button onClick={handleAnalyze} className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white">
+              <Sparkles className="w-4 h-4" /> Ask AI Analyst
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="w-full sm:w-[540px] overflow-y-auto border-l-border bg-card">
+            <SheetHeader className="mb-6">
+              <SheetTitle className="text-xl font-bold flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-indigo-600" /> Executive Summary
+              </SheetTitle>
+              <SheetDescription>
+                AI-generated analysis of this month's performance.
+              </SheetDescription>
+            </SheetHeader>
+            
+            {isAnalyzing ? (
+              <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                <Sparkles className="w-8 h-8 text-indigo-400 animate-spin" />
+                <p className="text-muted-foreground animate-pulse">Analyzing transactions and stock levels...</p>
+              </div>
+            ) : analysis ? (
+              <div className="space-y-6">
+                <div className="p-4 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-900">
+                  <p className="text-sm leading-relaxed text-indigo-900 dark:text-indigo-200">{analysis.summary}</p>
+                </div>
+                
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Key Metrics</h3>
+                  {analysis.metrics.map((m: any, i: number) => (
+                    <div key={i} className="flex justify-between items-center p-3 border rounded-lg">
+                      <span className="text-sm font-medium">{m.label}</span>
+                      <span className={`text-sm font-bold ${m.positive ? 'text-green-600' : 'text-red-600'}`}>{m.value}</span>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-100 dark:border-amber-900">
+                  <h3 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-2">Recommendation</h3>
+                  <p className="text-sm text-amber-800 dark:text-amber-300">{analysis.recommendation}</p>
+                </div>
+              </div>
+            ) : null}
+          </SheetContent>
+        </Sheet>
+      </div>
       
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
         {/* Revenue Card */}

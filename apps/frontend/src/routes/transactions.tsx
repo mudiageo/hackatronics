@@ -90,6 +90,19 @@ function Transactions() {
               <option value="settled">Settled</option>
               <option value="attested">Attested</option>
             </select>
+            
+            <div className="relative">
+              <input type="file" id="receipt-upload" accept="image/*" className="hidden" onChange={handleFileScan} />
+              <Button 
+                variant="secondary" 
+                className="flex gap-2 items-center text-indigo-600 bg-indigo-50 hover:bg-indigo-100" 
+                onClick={() => document.getElementById('receipt-upload')?.click()}
+                disabled={isScanning}
+              >
+                {isScanning ? <Sparkles className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+                {isScanning ? 'Scanning...' : 'AI Scan'}
+              </Button>
+            </div>
             <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
               <DialogTrigger asChild>
                 <Button className="flex gap-2 items-center">
