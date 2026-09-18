@@ -32,8 +32,8 @@ function getStatusBadge(status: string) {
   }
 }
 
+export const formatMoney = (kobo: number) => { return '₦' + (kobo / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 function Dashboard() {
-  const formatMoney = (kobo: number) => { return '₦' + (kobo / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
   const { metricsSummary, coverage, recentActivity } = Route.useLoaderData()
   const [analysis, setAnalysis] = useState<any>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
