@@ -43,7 +43,7 @@ function PrescribeRoute() {
       
       await router.invalidate()
     } catch (error: any) {
-      toast.error('Failed to generate prescription')
+      toast.error(error.message || 'Failed to generate prescription')
     } finally {
       setLoading(false)
     }

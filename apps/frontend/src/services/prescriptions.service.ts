@@ -5,7 +5,7 @@ import type { Prescription } from '../db/in-memory'
 
 // Expected Backend Schema
 export interface ItemIn {
-  drug_id: int | number;
+  drug_id: number;
   dose: string;
   frequency_per_day: number;
   days: number;
@@ -30,7 +30,22 @@ export const generatePrescriptionFn = createServerFn({ method: 'POST' })
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
-      if (!res.ok) throw new Error('Backend error: ' + await res.text())
+      if (!res.ok) {
+        const errorText = await res.text();
+        try {
+          const errData = JSON.parse(errorText);
+          if (errData?.detail?.error?.message) {
+            throw new Error(errData.detail.error.message);
+          } else if (typeof errData?.detail === 'string') {
+            throw new Error(errData.detail);
+          } else if (errData?.message) {
+            throw new Error(errData.message);
+          }
+        } catch (e) {
+          if (e.message !== errorText) throw e;
+        }
+        throw new Error(errorText);
+      }
       const data = await res.json()
       return data
     }
