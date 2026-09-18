@@ -1,3 +1,5 @@
+import { Camera, Sparkles } from "lucide-react";
+import { scanTransactionFn } from "../services/ai.service";
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus, CheckCircle2, CheckCircle, Circle, FileText, ArrowRight, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
