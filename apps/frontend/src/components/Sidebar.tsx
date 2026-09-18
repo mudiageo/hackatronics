@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill , Wallet as WalletIcon } from "lucide-react";
+import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill , Wallet as WalletIcon } from "Sparkles } from "lucide-react";
 import { useRole } from "./RoleProvider";
 
 export default function Sidebar() {
@@ -100,6 +100,19 @@ export default function Sidebar() {
             Verify & Dispense
           </Link>
         )}
+
+        
+        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 mt-6 px-3">
+          Intelligence
+        </div>
+        <Link 
+          to="/ai" 
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-indigo-600 dark:text-indigo-400 font-medium transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-950/50"
+          activeProps={{ className: "bg-indigo-100 dark:bg-indigo-900/40" }}
+        >
+          <Sparkles className="w-5 h-5" />
+          AI Hub
+        </Link>
 
         <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 mt-6 px-3">
           Trust & Verification
