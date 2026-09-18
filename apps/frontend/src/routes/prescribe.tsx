@@ -19,6 +19,8 @@ function PrescribeRoute() {
   const router = useRouter()
   const { role } = useRole()
   const [generatedRx, setGeneratedRx] = useState<any | null>(null)
+  const [patientSearch, setPatientSearch] = useState("Patient 421")
+  const [patientId, setPatientId] = useState(421)
   
   const [patients, setPatients] = useState<any[]>([])
   const [drugs, setDrugs] = useState<any[]>([])
@@ -39,8 +41,8 @@ function PrescribeRoute() {
   const [loading, setLoading] = useState(false)
   
   // Simulated Typeaheads
-  const [patientSearch, setPatientSearch] = useState("Patient 421")
-  const patientId = 421;
+  
+  
   
   const [items, setItems] = useState([
     { drugId: 57, drugName: "Drug 57", dose: "500mg", frequency: 3, days: 7, unitPriceKobo: 150000 }
