@@ -62,10 +62,20 @@ function WalletRoute() {
       toast.error('Failed to receive funds')
     }
   }
-    )
-  }
 
-  
+  return (
+    <div className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
+          <Landmark className="w-8 h-8 text-primary" />
+          Business Wallet
+        </h1>
+        <p className="text-muted-foreground mt-2">Manage your operating capital and seamlessly transfer funds.</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Left Column: Balance & Actions */}
         <div className="space-y-6">
           <Card className="bg-gradient-to-br from-primary to-primary/80 border-none shadow-lg text-primary-foreground overflow-hidden relative">
             <div className="absolute top-0 right-0 p-6 opacity-20">
