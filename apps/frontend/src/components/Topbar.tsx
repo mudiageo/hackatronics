@@ -52,7 +52,7 @@ export default function Topbar() {
             const roleToOrg: Record<string, number> = {
               'Clinic': 22,
               'Pharmacy': 23,
-              'Owner': 39,
+              'Owner': 23,
               'Bank': 24
             };
             document.cookie = `active_org_id=${roleToOrg[newRole]}; path=/`;
