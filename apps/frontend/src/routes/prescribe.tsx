@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { FileText, Copy, CheckCircle2, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { generatePrescriptionFn } from '../services/prescriptions.service'
+import { generatePrescriptionFn, searchPatientsFn, listDrugsFn } from '../services/prescriptions.service'
+import { useEffect, useCallback } from 'react'
 import { useRole } from '../components/RoleProvider'
 
 export const Route = createFileRoute('/prescribe')({
@@ -18,6 +19,23 @@ function PrescribeRoute() {
   const router = useRouter()
   const { role } = useRole()
   const [generatedRx, setGeneratedRx] = useState<any | null>(null)
+  
+  const [patients, setPatients] = useState<any[]>([])
+  const [drugs, setDrugs] = useState<any[]>([])
+  
+  useEffect(() => {
+    listDrugsFn().then(d => setDrugs(d.items || [])).catch(() => {})
+  }, [])
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (patientSearch.length > 1) {
+        searchPatientsFn({ data: patientSearch }).then(d => setPatients(d.items || [])).catch(() => {})
+      }
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [patientSearch])
+
   const [loading, setLoading] = useState(false)
   
   // Simulated Typeaheads
@@ -33,7 +51,7 @@ function PrescribeRoute() {
   }
 
   const addItem = () => {
-    setItems([...items, { drugId: 57, drugName: "Drug 57", dose: "", frequency: 1, days: 1, unitPriceKobo: 150000 }])
+    setItems([...items, { drugId: 0, drugName: "", dose: "", frequency: 1, days: 1, unitPriceKobo: 0 }])
   }
   
   const removeItem = (idx: number) => {
@@ -103,13 +121,37 @@ function PrescribeRoute() {
                 
                 <div className="space-y-2">
                   <Label htmlFor="patientSearch">Patient</Label>
-                  <Input 
-                    id="patientSearch" 
-                    value={patientSearch}
-                    onChange={(e) => setPatientSearch(e.target.value)}
-                    placeholder="Search patient by name or phone..." 
-                    className="max-w-md"
-                  />
+                  
+                  <div className="relative">
+                    <Input 
+                      id="patientSearch" 
+                      value={patientSearch}
+                      onChange={(e) => {
+                        setPatientSearch(e.target.value)
+                        setPatientId(0) // reset until selected
+                      }}
+                      placeholder="Search patient by name or phone..." 
+                      className="max-w-md"
+                    />
+                    {patients.length > 0 && !patientId && (
+                      <div className="absolute z-10 w-full max-w-md bg-popover text-popover-foreground border rounded-md mt-1 shadow-md">
+                        {patients.map(p => (
+                          <div 
+                            key={p.id} 
+                            className="px-4 py-2 hover:bg-muted cursor-pointer text-sm"
+                            onClick={() => {
+                              setPatientId(p.id)
+                              setPatientSearch(p.name)
+                              setPatients([])
+                            }}
+                          >
+                            <span className="font-semibold">{p.name}</span> <span className="text-muted-foreground ml-2">{p.phone}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                   <p className="text-xs text-muted-foreground">Selected: Patient ID {patientId}</p>
                 </div>
                 
@@ -132,7 +174,25 @@ function PrescribeRoute() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label>Drug Search</Label>
-                          <Input value={item.drugName} readOnly className="bg-muted/50" />
+                          
+                          <select 
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            value={item.drugId}
+                            onChange={(e) => {
+                              const d = drugs.find(d => d.id === parseInt(e.target.value))
+                              if (d) {
+                                updateItem(idx, 'drugId', d.id)
+                                updateItem(idx, 'drugName', d.name)
+                                updateItem(idx, 'unitPriceKobo', d.unit_price)
+                              }
+                            }}
+                          >
+                            <option value={57}>Select Drug...</option>
+                            {drugs.map(d => (
+                              <option key={d.id} value={d.id}>{d.name}</option>
+                            ))}
+                          </select>
+
                           <p className="text-xs text-muted-foreground">ID: {item.drugId} • Unit Price: {formatMoney(item.unitPriceKobo)}</p>
                         </div>
                         <div className="space-y-2">

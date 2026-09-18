@@ -54,8 +54,12 @@ export const addInventoryItemFn = createServerFn({ method: 'POST' })
     const org_id = match ? parseInt(match[1]) : 23;
 
     if (!useMocks) {
-      // For now, if the backend doesn't support manual addition via this UI component, we throw
-      throw new Error('Adding inventory items manually is not yet supported by the backend API')
+      // We can use the stock-in endpoint
+      const res = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/inventory/${org_id}/inventory/stock-in?drug_id=${data.sku.replace('SKU-','')}&quantity=${data.qtyOnHand}`, {
+        method: 'POST'
+      });
+      if (!res.ok) throw new Error('Failed to stock in item');
+      return { ...data, id: 'NEW', status: 'In Stock' } as any;
     }
 
     // --- MOCK FALLBACK ---
