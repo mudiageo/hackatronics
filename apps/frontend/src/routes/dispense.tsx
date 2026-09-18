@@ -40,7 +40,7 @@ function DispenseRoute() {
     setErrorData(null)
     
     try {
-      const data = await verifyPrescriptionFn({ code: code.toUpperCase(), patient_id: patientId, org_id: 23 })
+      const data = await verifyPrescriptionFn({ data: { code: code.toUpperCase(), patient_id: patientId, org_id: 23 } })
       if (!data.valid) {
         setErrorData({ message: data.message || 'Prescription validation failed', reason_code: data.reason_code || 'UNKNOWN_ERROR' })
         setStep('invalid')
@@ -59,12 +59,7 @@ function DispenseRoute() {
   const handleDispense = async () => {
     setLoading(true)
     try {
-      const result = await dispensePrescriptionFn({ 
-        code: code.toUpperCase(), 
-        patient_id: patientId,
-        org_id: 23,
-        pharmacist_id: pharmacistId
-      })
+      const result = await dispensePrescriptionFn({ data: { code: code.toUpperCase(), patient_id: patientId, org_id: 23, pharmacist_id: pharmacistId } })
       setDispenseData(result)
       setStep('success')
       await router.invalidate() 

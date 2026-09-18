@@ -51,7 +51,7 @@ function PrescribeRoute() {
     setLoading(true)
     
     try {
-      const rx = await generatePrescriptionFn({
+      const rx = await generatePrescriptionFn({ data: {
         patient_id: patientId,
         prescriber_id: 36, // Dr Maximum Alex
         items: items.map(item => ({
@@ -60,7 +60,7 @@ function PrescribeRoute() {
           frequency_per_day: item.frequency,
           days: item.days,
         }))
-      })
+      } })
       
       setGeneratedRx(rx)
       toast.success('Prescription generated successfully')
