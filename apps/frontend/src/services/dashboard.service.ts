@@ -32,20 +32,17 @@ export const getDashboardData = createServerFn({ method: 'GET' }).handler(async 
     const org_id = match ? parseInt(match[1]) : 23;
 
     if (!useMocks) {
-      // 1. Fetch transactions to calculate revenue/expenses manually (since there's no dashboard-metrics endpoint yet)
-      const txRes = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/passport/${org_id}/transactions?limit=100`)
+      // 1. Fetch from new dashboard-metrics endpoint
+      const metricsRes = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/passport/${org_id}/dashboard-metrics`)
+      const metricsData = await metricsRes.json()
+      
+      const revenue = metricsData.revenue;
+      const expenses = metricsData.expenses;
+      const profit = metricsData.profit;
+      const cashPosition = metricsData.profit;
+      
+      const txRes = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/passport/${org_id}/transactions?limit=5`)
       const txData = await txRes.json()
-      
-      let revenue = 0;
-      let expenses = 0;
-      
-      txData.items.forEach((t: any) => {
-        if (t.amount > 0) revenue += t.amount;
-        else expenses += Math.abs(t.amount);
-      });
-      
-      const profit = revenue - expenses;
-      const cashPosition = profit;
 
       // 2. Fetch coverage from passport endpoint
       const passportRes = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/passport/${org_id}/passport`)

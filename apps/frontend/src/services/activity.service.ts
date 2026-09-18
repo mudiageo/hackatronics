@@ -39,10 +39,10 @@ export const getVerifiedActivity = createServerFn({ method: 'GET' }).handler(asy
         partyB: d.to_org,
         amount: d.amount,
         status: 'settled',
-        steps: d.steps.map((s: string, idx: number) => ({
-          label: s.charAt(0).toUpperCase() + s.slice(1).replace('_', ' '),
+        steps: d.steps.map((s: any, idx: number) => ({
+          label: s.step.charAt(0).toUpperCase() + s.step.slice(1).replace('_', ' '),
           status: 'completed',
-          date: new Date(d.dispensed_at).toLocaleString()
+          date: new Date(s.timestamp).toLocaleString()
         }))
       }))
     }

@@ -178,3 +178,25 @@ export const dispensePrescriptionFn = createServerFn({ method: 'POST' })
     }
   }
 )
+
+export const searchPatientsFn = createServerFn({ method: 'GET' })
+  .validator((q: string) => q)
+  .handler(async ({ data: q }) => {
+    const useMocks = process.env.VITE_USE_MOCKS !== 'false';
+    if (!useMocks) {
+      const res = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/patients/search?q=${encodeURIComponent(q)}`)
+      return await res.json()
+    }
+    return { items: [{ id: 421, name: "Mock Patient", phone: "08012345678" }] }
+  })
+
+export const listDrugsFn = createServerFn({ method: 'GET' })
+  .handler(async () => {
+    const useMocks = process.env.VITE_USE_MOCKS !== 'false';
+    if (!useMocks) {
+      const res = await fetch(`${process.env.VITE_BACKEND_URL || 'http://localhost:8000'}/drugs`)
+      return await res.json()
+    }
+    return { items: [{ id: 57, name: "Mock Drug 500mg", unit_price: 150000 }] }
+  })
+
