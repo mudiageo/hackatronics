@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Transactions</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body data-role="owner">
+<main>
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:start;gap:16px;flex-wrap:wrap">
+    <div>
+      <h1>Transactions</h1>
+      <p class="lede">The system of record for everything that happened financially.</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <select id="filter" class="rolesel">
+        <option value="">All Levels</option>
+        <option value="self_reported">Recorded</option>
+        <option value="settled">Settled</option>
+        <option value="attested">Attested</option>
+      </select>
+      <button class="ghost" onclick="location.href='/scan'">&#128247; Scan</button>
+      <button id="add">+ Add Transaction</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th>Date</th><th>Description</th><th>Counterparty</th>
+        <th class="num">Amount</th><th class="right">Status</th>
+      </tr></thead>
+      <tbody id="rows"><tr><td colspan="5" class="spin">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modalbg hide" id="modal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:start">
+      <div>
+        <h2 class="mb0">Add Transaction</h2>
+        <p class="muted small">Record a new financial transaction manually.</p>
+      </div>
+      <button class="iconbtn" id="close">&times;</button>
+    </div>
+
+    <div class="field" style="margin-top:14px">
+      <label>Description</label>
+      <input id="desc" placeholder="e.g. Office Supplies">
+    </div>
+    <div class="field">
+      <label>Counterparty</label>
+      <input id="party" placeholder="e.g. Stationery Hub">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Amount (&#8358;)</label>
+        <input id="amt" type="number" value="5000">
+      </div>
+      <div class="field">
+        <label>Type</label>
+        <select id="type">
+          <option value="income">Income</option>
+          <option value="sale">Sale</option>
+          <option value="expense">Expense</option>
+          <option value="purchase">Purchase</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Date</label>
+      <input id="date" type="date">
+    </div>
+
+    <div id="merr"></div>
+    <p class="muted small">Manual entries save as
+      <span class="badge self">SELF-REPORTED</span> — typed records cannot
+      claim independent attestation.</p>
+    <div class="row">
+      <button class="ghost" id="cancel">Cancel</button>
+      <button id="save">Record Transaction</button>
+    </div>
+  </div>
+</div>
+</main>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/layout.js"></script>
+<script src="/static/js/transactions.js"></script>
+</body>
+</html>

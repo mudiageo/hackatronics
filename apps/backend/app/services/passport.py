@@ -4,17 +4,29 @@ from sqlmodel import Session, select, func
 from app.models.ledger import Transaction, Payment
 from app.models.base import Attestation, TxnType
 from app.models.dispense import Dispense
+from sqlmodel import Session, select, func
+from sqlalchemy import case
 
 def _month(dt): return dt.strftime("%Y-%m")
 
 def coverage(session: Session, org_id: int) -> dict:
-    txns = session.exec(select(Transaction).where(
-        Transaction.org_id == org_id,
-        Transaction.type.in_([TxnType.INCOME, TxnType.SALE]))).all()
-    recorded = sum(t.amount for t in txns)
-    settled = sum(t.amount for t in txns if t.attestation_level in
-                  (Attestation.SETTLED, Attestation.ATTESTED))
-    attested = sum(t.amount for t in txns if t.attestation_level == Attestation.ATTESTED)
+    row = session.exec(
+        select(
+            func.coalesce(func.sum(Transaction.amount), 0),
+            func.coalesce(func.sum(
+                case((Transaction.attestation_level.in_(
+                    [Attestation.SETTLED, Attestation.ATTESTED]),
+                    Transaction.amount), else_=0)), 0),
+            func.coalesce(func.sum(
+                case((Transaction.attestation_level == Attestation.ATTESTED,
+                      Transaction.amount), else_=0)), 0),
+        ).where(
+            Transaction.org_id == org_id,
+            Transaction.type.in_([TxnType.INCOME, TxnType.SALE]),
+        )
+    ).one()
+
+    recorded, settled, attested = row
     pct = lambda a, b: round(a / b * 100) if b else 0
     return {"recorded": recorded, "settled": settled, "attested": attested,
             "settled_pct": pct(settled, recorded),

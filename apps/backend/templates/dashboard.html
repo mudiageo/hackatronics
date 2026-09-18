@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dashboard</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body data-role="owner">
+<main>
+<div class="wrap">
+  <h1>Business health</h1>
+  <p class="lede">Wellcare Pharmacy, Ikeja &middot; how much of your activity is backed by evidence.</p>
+
+  <div class="grid g4" id="stats"><div class="spin">Loading…</div></div>
+
+  <div class="card mt18">
+    <h2>Evidence coverage</h2>
+    <div class="covbar">
+      <div class="settled" id="bar-settled" style="width:0"></div>
+      <div class="attested" id="bar-attested" style="width:0"></div>
+    </div>
+    <div class="covlegend">
+      <span><i class="sw" style="background:#223052"></i> <b id="l-rec">100%</b>&nbsp;recorded</span>
+      <span><i class="sw" style="background:var(--blue)"></i> <b id="l-set">–</b>&nbsp;settled</span>
+      <span><i class="sw" style="background:var(--green)"></i> <b id="l-att">–</b>&nbsp;attested</span>
+    </div>
+    <p class="muted small mt18 mb0" id="cov-note"></p>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <h2 class="mb0">Recent transactions</h2>
+      <a href="/transactions" class="small" style="color:var(--accent)">View all &rarr;</a>
+    </div>
+    <table><tbody id="txns"></tbody></table>
+  </div>
+</div>
+</main>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/layout.js"></script>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

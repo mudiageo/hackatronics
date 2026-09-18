@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Verify &amp; Dispense</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body data-role="pharmacy">
+<main>
+<div class="wrap narrow">
+
+  <div class="orgband pharm">
+    <div class="ico">&#128138;</div>
+    <div>
+      <div class="nm">Wellcare Pharmacy, Ikeja</div>
+      <div class="sub">Dispensing counter &middot; Pharm. Tobi Ade</div>
+    </div>
+  </div>
+
+  <h1>Dispense a prescription</h1>
+  <p class="lede">Enter the patient and the code from their prescription slip.</p>
+
+  <div class="card" id="lookup">
+    <div class="field">
+      <label>Patient</label>
+      <input id="patient-q" placeholder="Search patient name…" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>&nbsp;</label>
+      <select id="patient"><option value="">— select a patient —</option></select>
+    </div>
+    <div class="field">
+      <label>Dispensing code</label>
+      <input id="code" placeholder="e.g. K7M2QX4B" maxlength="8"
+             style="font-family:ui-monospace,monospace;font-size:20px;letter-spacing:5px;text-transform:uppercase">
+    </div>
+    <button class="wide" id="verify">Verify code</button>
+  </div>
+
+  <div id="result"></div>
+
+</div>
+</main>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/layout.js"></script>
+<script src="/static/js/pharmacy.js"></script>
+</body>
+</html>

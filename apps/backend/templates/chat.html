@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI Business Advisor</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<main>
+<div class="wrap narrow">
+  <h1>AI business advisor <span class="soon">V2</span></h1>
+  <p class="lede">Ask questions about your own numbers &mdash; grounded in your
+     verified ledger, not in general advice.</p>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <div id="thread" style="padding:22px;min-height:280px"></div>
+    <div style="display:flex;gap:10px;padding:16px 22px;border-top:1px solid var(--line)">
+      <input id="q" placeholder="Ask about your revenue, stock or financing…">
+      <button id="send">Ask</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>What it will answer</h2>
+    <ul class="muted" style="margin:0;padding-left:20px">
+      <li>"Why did my readiness score drop this month?"</li>
+      <li>"Which products are moving slowest?"</li>
+      <li>"How much more attested revenue do I need for a &#8358;2m limit?"</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>How it stays honest</h2>
+    <p class="muted mb0">The backend filters the business's own data
+      <em>before</em> anything reaches the model &mdash; the same
+      authorisation rules that refuse a bank access to raw books apply here.
+      The assistant can only discuss what the asking role is allowed to see,
+      and every answer cites the records behind it.</p>
+  </div>
+</div>
+</main>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/layout.js"></script>
+<script src="/static/js/chat.js"></script>
+</body>
+</html>
