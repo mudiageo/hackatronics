@@ -37,6 +37,42 @@ function Transactions() {
   const transactions = Route.useLoaderData()
   const router = useRouter()
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null)
+  const [isScanning, setIsScanning] = useState(false)
+  
+  const handleFileScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsScanning(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const base64Str = (event.target?.result as string).split(',')[1];
+        
+        const res = await scanTransactionFn({ data: { base64Data: base64Str, mimeType: file.type }});
+        
+        const descEl = document.getElementById('description') as HTMLInputElement;
+        if (descEl) descEl.value = 'AI Scanned Sale: ' + res.items.map((i: any) => i.read_as).join(', ');
+        
+        const amountInput = document.getElementById('amount') as HTMLInputElement;
+        if (amountInput) amountInput.value = (res.amount / 100).toString();
+        
+        const counterpartyEl = document.getElementById('counterparty') as HTMLInputElement;
+        if (counterpartyEl) counterpartyEl.value = res.customer || 'Walk-in Customer';
+        
+        const typeEl = document.getElementById('type') as HTMLInputElement;
+        if (typeEl) typeEl.value = 'Pharmacy Sales';
+        
+        setIsAddModalOpen(true);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsScanning(false);
+      e.target.value = '';
+    }
+  }
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [filterLevel, setFilterLevel] = useState<string>('all')
   const [isSubmitting, setIsSubmitting] = useState(false)
