@@ -10,6 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AiAnalystRouteImport } from './routes/ai-analyst'
+import { Route as AiScannerRouteImport } from './routes/ai-scanner'
+import { Route as AiVoiceRouteImport } from './routes/ai-voice'
 import { Route as DispenseRouteImport } from './routes/dispense'
 import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as PassportRouteImport } from './routes/passport'
@@ -21,6 +24,21 @@ import { Route as WalletRouteImport } from './routes/wallet'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiAnalystRoute = AiAnalystRouteImport.update({
+  id: '/ai-analyst',
+  path: '/ai-analyst',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiScannerRoute = AiScannerRouteImport.update({
+  id: '/ai-scanner',
+  path: '/ai-scanner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiVoiceRoute = AiVoiceRouteImport.update({
+  id: '/ai-voice',
+  path: '/ai-voice',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DispenseRoute = DispenseRouteImport.update({
@@ -61,6 +79,9 @@ const WalletRoute = WalletRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-analyst': typeof AiAnalystRoute
+  '/ai-scanner': typeof AiScannerRoute
+  '/ai-voice': typeof AiVoiceRoute
   '/dispense': typeof DispenseRoute
   '/inventory': typeof InventoryRoute
   '/passport': typeof PassportRoute
@@ -71,6 +92,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-analyst': typeof AiAnalystRoute
+  '/ai-scanner': typeof AiScannerRoute
+  '/ai-voice': typeof AiVoiceRoute
   '/dispense': typeof DispenseRoute
   '/inventory': typeof InventoryRoute
   '/passport': typeof PassportRoute
@@ -82,6 +106,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai-analyst': typeof AiAnalystRoute
+  '/ai-scanner': typeof AiScannerRoute
+  '/ai-voice': typeof AiVoiceRoute
   '/dispense': typeof DispenseRoute
   '/inventory': typeof InventoryRoute
   '/passport': typeof PassportRoute
@@ -94,6 +121,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai-analyst'
+    | '/ai-scanner'
+    | '/ai-voice'
     | '/dispense'
     | '/inventory'
     | '/passport'
@@ -104,6 +134,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai-analyst'
+    | '/ai-scanner'
+    | '/ai-voice'
     | '/dispense'
     | '/inventory'
     | '/passport'
@@ -114,6 +147,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/ai-analyst'
+    | '/ai-scanner'
+    | '/ai-voice'
     | '/dispense'
     | '/inventory'
     | '/passport'
@@ -125,6 +161,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiAnalystRoute: typeof AiAnalystRoute
+  AiScannerRoute: typeof AiScannerRoute
+  AiVoiceRoute: typeof AiVoiceRoute
   DispenseRoute: typeof DispenseRoute
   InventoryRoute: typeof InventoryRoute
   PassportRoute: typeof PassportRoute
@@ -141,6 +180,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-analyst': {
+      id: '/ai-analyst'
+      path: '/ai-analyst'
+      fullPath: '/ai-analyst'
+      preLoaderRoute: typeof AiAnalystRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-scanner': {
+      id: '/ai-scanner'
+      path: '/ai-scanner'
+      fullPath: '/ai-scanner'
+      preLoaderRoute: typeof AiScannerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-voice': {
+      id: '/ai-voice'
+      path: '/ai-voice'
+      fullPath: '/ai-voice'
+      preLoaderRoute: typeof AiVoiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dispense': {
@@ -197,6 +257,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiAnalystRoute: AiAnalystRoute,
+  AiScannerRoute: AiScannerRoute,
+  AiVoiceRoute: AiVoiceRoute,
   DispenseRoute: DispenseRoute,
   InventoryRoute: InventoryRoute,
   PassportRoute: PassportRoute,

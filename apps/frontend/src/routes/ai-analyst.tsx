@@ -60,7 +60,7 @@ function AIAnalystRoute() {
                 {analysis.metrics.map((m: any, i: number) => (
                   <div key={i} className="flex justify-between border-t border-indigo-200 dark:border-indigo-800 pt-3">
                     <span className="text-muted-foreground font-medium">{m.label}</span>
-                    <span className={\`font-bold \${m.positive ? 'text-green-600' : 'text-red-600'}\`}>{m.value}</span>
+                    <span className={`font-bold ${m.positive ? 'text-green-600' : 'text-red-600'}`}>{m.value}</span>
                   </div>
                 ))}
               </div>

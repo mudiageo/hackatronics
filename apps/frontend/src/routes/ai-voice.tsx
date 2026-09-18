@@ -52,7 +52,7 @@ function AIVoiceRoute() {
               size="lg"
               onClick={handleVoiceCommand} 
               disabled={isListening} 
-              className={\`w-full \${isListening ? 'bg-rose-500 animate-pulse' : 'bg-rose-600 hover:bg-rose-700'}\`}
+              className={`w-full ${isListening ? 'bg-rose-500 animate-pulse' : 'bg-rose-600 hover:bg-rose-700'}`}
             >
               {isListening ? "Listening..." : "Test Voice Command"}
             </Button>

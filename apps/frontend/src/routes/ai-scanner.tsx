@@ -25,7 +25,7 @@ function AIScannerRoute() {
       reader.onload = async (event) => {
         const base64Str = (event.target?.result as string).split(',')[1];
         const res = await scanTransactionFn({ data: { base64Data: base64Str, mimeType: file.type }});
-        toast.success(\`Scanned \${res.items.length} items from \${res.customer}\`);
+        toast.success(`Scanned ${res.items.length} items from ${res.customer}`);
       };
       reader.readAsDataURL(file);
     } catch (err) {
