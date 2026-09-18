@@ -16,6 +16,7 @@ import { Route as PassportRouteImport } from './routes/passport'
 import { Route as PrescribeRouteImport } from './routes/prescribe'
 import { Route as TransactionsRouteImport } from './routes/transactions'
 import { Route as VerifiedActivityRouteImport } from './routes/verified-activity'
+import { Route as WalletRouteImport } from './routes/wallet'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +53,11 @@ const VerifiedActivityRoute = VerifiedActivityRouteImport.update({
   path: '/verified-activity',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WalletRoute = WalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/prescribe': typeof PrescribeRoute
   '/transactions': typeof TransactionsRoute
   '/verified-activity': typeof VerifiedActivityRoute
+  '/wallet': typeof WalletRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/prescribe': typeof PrescribeRoute
   '/transactions': typeof TransactionsRoute
   '/verified-activity': typeof VerifiedActivityRoute
+  '/wallet': typeof WalletRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/prescribe': typeof PrescribeRoute
   '/transactions': typeof TransactionsRoute
   '/verified-activity': typeof VerifiedActivityRoute
+  '/wallet': typeof WalletRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/prescribe'
     | '/transactions'
     | '/verified-activity'
+    | '/wallet'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/prescribe'
     | '/transactions'
     | '/verified-activity'
+    | '/wallet'
   id:
     | '__root__'
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/prescribe'
     | '/transactions'
     | '/verified-activity'
+    | '/wallet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +131,7 @@ export interface RootRouteChildren {
   PrescribeRoute: typeof PrescribeRoute
   TransactionsRoute: typeof TransactionsRoute
   VerifiedActivityRoute: typeof VerifiedActivityRoute
+  WalletRoute: typeof WalletRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifiedActivityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/wallet': {
+      id: '/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -183,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrescribeRoute: PrescribeRoute,
   TransactionsRoute: TransactionsRoute,
   VerifiedActivityRoute: VerifiedActivityRoute,
+  WalletRoute: WalletRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
