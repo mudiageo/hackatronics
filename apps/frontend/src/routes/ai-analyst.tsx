@@ -65,17 +65,17 @@ function AIAnalystRoute() {
           {/* Chat Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/20">
             {messages.map((msg, idx) => (
-              <div key={idx} className={\`flex gap-3 \${msg.role === 'user' ? 'justify-end' : 'justify-start'}\`}>
+              <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {msg.role === 'ai' && (
                   <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 mt-1">
                     <Sparkles className="w-4 h-4" />
                   </div>
                 )}
-                <div className={\`max-w-[80%] rounded-2xl px-4 py-3 \${
+                <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                   msg.role === 'user' 
                     ? 'bg-primary text-primary-foreground rounded-tr-sm' 
                     : 'bg-background border shadow-sm rounded-tl-sm'
-                }\`}>
+                }`}>
                   <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
                 </div>
                 {msg.role === 'user' && (
