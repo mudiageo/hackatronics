@@ -1,3 +1,7 @@
+import { Sparkles } from "lucide-react";
+import { analyzeBusinessFn } from "../services/ai.service";
+import { useState } from "react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "../components/ui/sheet";
 
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
