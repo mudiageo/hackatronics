@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill , Wallet as WalletIcon , Sparkles } from "lucide-react";
+import { LayoutDashboard, Receipt, Package, ShieldCheck, FileText, Stethoscope, Pill, Wallet as WalletIcon, Sparkles } from "Camera, Mic } from "lucide-react";
 import { useRole } from "./RoleProvider";
 
 export default function Sidebar() {
@@ -102,17 +102,35 @@ export default function Sidebar() {
         )}
 
         
+        
         <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 mt-6 px-3">
-          Intelligence
+          Gemini AI (v2)
         </div>
         <Link 
-          to="/ai" 
+          to="/ai-scanner" 
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-blue-600 dark:text-blue-400 font-medium transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50"
+          activeProps={{ className: "bg-blue-100 dark:bg-blue-900/40" }}
+        >
+          <Camera className="w-5 h-5" />
+          Receipt Scanner
+        </Link>
+        <Link 
+          to="/ai-analyst" 
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-indigo-600 dark:text-indigo-400 font-medium transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-950/50"
           activeProps={{ className: "bg-indigo-100 dark:bg-indigo-900/40" }}
         >
           <Sparkles className="w-5 h-5" />
-          AI Hub
+          Executive Analyst
         </Link>
+        <Link 
+          to="/ai-voice" 
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-rose-600 dark:text-rose-400 font-medium transition-colors hover:bg-rose-50 dark:hover:bg-rose-950/50"
+          activeProps={{ className: "bg-rose-100 dark:bg-rose-900/40" }}
+        >
+          <Mic className="w-5 h-5" />
+          Voice Assistant
+        </Link>
+
 
         <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 mt-6 px-3">
           Trust & Verification
